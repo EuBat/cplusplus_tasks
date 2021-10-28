@@ -2,34 +2,42 @@
 #include <iostream>
 #include <cstring>
 #include <limits>
+#include "exception.h"
 
 template <typename T>
-class Matrix {
+class Matrix
+{
     public:
-       ~Matrix() {
-            clear_memory();
+       ~Matrix()
+        {
+        clear_memory();
         };
 
         Matrix(const size_t rows, const size_t cols)
                 : m_rows(rows),
-                  m_cols(cols) {
+                  m_cols(cols)
+        {
             get_memory(m_rows, m_cols);
             set_value(0);
         }
 
         Matrix(const T number, const size_t rows, const size_t cols)
             : m_rows(rows),
-              m_cols(cols) {
+              m_cols(cols)
+        {
             get_memory(m_rows, m_cols);
             set_value(number);
         }
 
         Matrix(const T *numeric_2D_array, const size_t rows, const size_t cols)
             : m_rows(rows),
-              m_cols(cols) {
+              m_cols(cols)
+        {
             get_memory(m_rows,m_cols);
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
                     m_matrix[i][j] = *(numeric_2D_array + i * m_cols + j);
                 }
             }
@@ -37,7 +45,8 @@ class Matrix {
 
         Matrix(const char *math_string, const size_t rows, const size_t cols)
             : m_rows(rows),
-              m_cols(cols) {
+              m_cols(cols)
+        {
             char math_string_copy[std::strlen(math_string)];
             T matrix_temp[m_rows * m_cols];
 
@@ -46,14 +55,19 @@ class Matrix {
 
             bool flag_no_letter {true};
             unsigned int iter {0};
-            while (tokens != nullptr && flag_no_letter) {
-                for (unsigned int i = 0; i < std::strlen(tokens); i++) {
-                    if (!std::isdigit(tokens[i]) && tokens[i] != '.' ) {
+            while (tokens != nullptr && flag_no_letter)
+            {
+                for (unsigned int i = 0; i < std::strlen(tokens); i++)
+                {
+                    if (!std::isdigit(tokens[i]) && tokens[i] != '.' )
+                    {
                         flag_no_letter = false;
                     }
                 }
-                if (flag_no_letter) {
-                    if (sizeof(T) > sizeof(int)) {
+                if (flag_no_letter)
+                {
+                    if (sizeof(T) > sizeof(int))
+                    {
                         matrix_temp[iter] = std::stod(tokens);
                     } else {
                         matrix_temp[iter] = std::stoi(tokens);
@@ -63,22 +77,28 @@ class Matrix {
                 tokens = std::strtok(nullptr," [],;");
             }
 
-            if (flag_no_letter) {
+            if (flag_no_letter)
+            {
                 get_memory(m_rows, m_cols);
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < m_cols; j++) {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < m_cols; j++)
+                    {
                         m_matrix[i][j] = matrix_temp[i * m_rows+j];
                     }
                 }
-            } else {
+            } else
+            {
                 m_cols = 0;
                 m_rows = 0;
             }
         };
 
-        Matrix(const Matrix& lhs_matrix) {
+        Matrix(const Matrix& lhs_matrix)
+        {
             if (this != &lhs_matrix) {
-                if (m_matrix != nullptr) {
+                if (m_matrix != nullptr)
+                {
                     clear_memory();
                 }
                 m_rows = lhs_matrix.m_rows;
@@ -92,8 +112,10 @@ class Matrix {
             }
         }
 
-        Matrix(Matrix&& rhs_matrix) {
-            if (this != &rhs_matrix) {
+        Matrix(Matrix&& rhs_matrix)
+        {
+            if (this != &rhs_matrix)
+            {
                 m_matrix = std::move(rhs_matrix.m_matrix);
                 rhs_matrix.m_matrix = nullptr;
                 rhs_matrix.m_cols = 0;
@@ -101,16 +123,21 @@ class Matrix {
             }
         }
 
-        Matrix& operator=(const Matrix& lhs_matrix) {
-            if (this != &lhs_matrix) {
-                if (m_matrix != nullptr) {
+        Matrix& operator=(const Matrix& lhs_matrix)
+        {
+            if (this != &lhs_matrix)
+            {
+                if (m_matrix != nullptr)
+                {
                     clear_memory();
                 }
                 m_rows = lhs_matrix.m_rows;
                 m_cols = lhs_matrix.m_cols;
                 get_memory(m_rows, m_cols);
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < m_cols; j++) {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < m_cols; j++)
+                    {
                         m_matrix[i][j] = lhs_matrix.m_matrix[i][j];
                     }
                 }
@@ -118,8 +145,10 @@ class Matrix {
             return *this;
         };
 
-        Matrix& operator=(Matrix&& rhs_matrix) {
-            if (this != &rhs_matrix) {
+        Matrix& operator=(Matrix&& rhs_matrix)
+        {
+            if (this != &rhs_matrix)
+            {
                 m_matrix = std::move(rhs_matrix.m_matrix);
                 rhs_matrix.m_matrix = nullptr;
                 rhs_matrix.m_cols = 0;
@@ -128,120 +157,155 @@ class Matrix {
             return *this;
         };
 
-        Matrix& operator+=(const T value) {
-            if ((value > 0) && (get_max_element() > std::numeric_limits<T>::max() - value)) {
+        Matrix& operator+=(const T value)
+        {
+            if ((value > 0) && (get_max_element() > std::numeric_limits<T>::max() - value))
+            {
                std::cout << "Additional overflow" << std::endl;
                return *this;
             }
 
-            if ((value < 0) && (get_max_element() < std::numeric_limits<T>::min() - value)) {
+            if ((value < 0) && (get_max_element() < std::numeric_limits<T>::min() - value))
+            {
                 std::cout << "Additional overflow" << std::endl;
                 return *this;
             }
 
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
                    m_matrix[i][j] = m_matrix[i][j] + value;
                 }
             }
             return *this;
         }
 
-        Matrix& operator-=(const T value) {
-            if ((value > 0) && (get_max_element() < std::numeric_limits<T>::min() + value)) {
+        Matrix& operator-=(const T value)
+        {
+            if ((value > 0) && (get_max_element() < std::numeric_limits<T>::min() + value))
+            {
                std::cout << "Subtraction overflow" << std::endl;
                return *this;
             }
 
-            if ((value < 0) && (get_max_element() > std::numeric_limits<T>::max() + value)) {
+            if ((value < 0) && (get_max_element() > std::numeric_limits<T>::max() + value))
+            {
                 std::cout << "Subtraction overflow" << std::endl;
                 return *this;
             }
 
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
                    m_matrix[i][j] = m_matrix[i][j] - value;
                 }
             }
             return *this;
         }
 
-        Matrix& operator*=(const T value) {
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
+        Matrix& operator*=(const T value)
+        {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
                    m_matrix[i][j] = m_matrix[i][j] * value;
                 }
             }
             return *this;
         }
 
-        Matrix& operator/=(const T value ) {
-            if (value) {
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < m_cols; j++) {
+        Matrix& operator/=(const T value )
+        {
+            if (value)
+            {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < m_cols; j++)
+                    {
                        m_matrix[i][j] = m_matrix[i][j] / value;
                     }
                 }
-            } else {
+            } else
+            {
                 std::cout << "Division by zero" << std::endl;
             }
             return *this;
         }
 
-        Matrix& operator+=(const Matrix& matrix) {
-            if (m_rows == matrix.m_rows && m_cols == matrix.m_cols) {
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < m_cols; j++) {
-                        if ((matrix.m_matrix[i][j] > 0) && (get_max_element() > std::numeric_limits<T>::max() - matrix.m_matrix[i][j])) {
+        Matrix& operator+=(const Matrix& matrix)
+        {
+            if (m_rows == matrix.m_rows && m_cols == matrix.m_cols)
+            {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < m_cols; j++)
+                    {
+                        if ((matrix.m_matrix[i][j] > 0) && (get_max_element() > std::numeric_limits<T>::max() - matrix.m_matrix[i][j]))
+                        {
                            std::cout << "Additional overflow" << std::endl;
                            return *this = Matrix();
                         }
 
-                        if ((matrix.m_matrix[i][j] < 0) && (this->get_max_element() < std::numeric_limits<T>::min() - matrix.m_matrix[i][j])) {
+                        if ((matrix.m_matrix[i][j] < 0) && (this->get_max_element() < std::numeric_limits<T>::min() - matrix.m_matrix[i][j]))
+                        {
                             std::cout << "Additional overflow" << std::endl;
                             return *this = Matrix();
                         }
-
                         m_matrix[i][j] = m_matrix[i][j] + matrix.m_matrix[i][j];
                     }
                 }
-            } else {
+            } else
+            {
                 std::cout << "Additioin is not posible" << std::endl;
             }
             return *this;
         }
 
-        Matrix& operator-=(const Matrix& matrix) {
-            if (m_rows == matrix.m_rows && m_cols == matrix.m_cols) {
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < m_cols; j++) {
-                        if ((matrix.m_matrix[i][j] > 0) && (m_matrix[i][j] < std::numeric_limits<T>::min() + matrix.m_matrix[i][j])) {
+        Matrix& operator-=(const Matrix& matrix)
+        {
+            if (m_rows == matrix.m_rows && m_cols == matrix.m_cols)
+            {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < m_cols; j++)
+                    {
+                        if ((matrix.m_matrix[i][j] > 0) && (m_matrix[i][j] < std::numeric_limits<T>::min() + matrix.m_matrix[i][j]))
+                        {
                            std::cout << "Subtraction overflow" << std::endl;
                            return *this = Matrix();
                         }
 
-                        if ((matrix.m_matrix[i][j] < 0) && (m_matrix[i][j] > std::numeric_limits<T>::max() + matrix.m_matrix[i][j])) {
+                        if ((matrix.m_matrix[i][j] < 0) && (m_matrix[i][j] > std::numeric_limits<T>::max() + matrix.m_matrix[i][j]))
+                        {
                             std::cout << "Subtraction overflow" << std::endl;
                             return *this = Matrix();
                         }
-
                         m_matrix[i][j] = m_matrix[i][j] - matrix.m_matrix[i][j];
                     }
                 }
-            } else {
+            } else
+            {
                 std::cout << "Subtraction is not posible" << std::endl;
             }
             return *this;
         }
 
-        Matrix& operator*=(const Matrix& matrix) {
-            if (m_cols == matrix.m_rows) {
+        Matrix& operator*=(const Matrix& matrix)
+        {
+            if (m_cols == matrix.m_rows)
+            {
                 Matrix temp_matrix(m_rows,matrix.m_cols);
                 T temp_element;
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < matrix.m_cols; j++) {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < matrix.m_cols; j++)
+                    {
                         temp_element = 0;
-                        for (unsigned int k = 0; k < m_cols; k++) {
+                        for (unsigned int k = 0; k < m_cols; k++)
+                        {
                             temp_element += m_matrix[i][k] * matrix.m_matrix[k][j];
                         }
                         temp_matrix.m_matrix[i][j] = temp_element;
@@ -254,42 +318,61 @@ class Matrix {
             return *this;
         }
 
-        Matrix& operator/=(const Matrix& matrix) {
-            if (m_rows == m_cols) {
+        Matrix& operator/=(const Matrix& matrix)
+        {
+            if (m_rows == m_cols)
+            {
                 *this *= matrix.get_inverse_matrix();
-            } else {
+            } else
+            {
                 std::cout << "Division error" << std::endl;
             }
             return *this;
         }
 
         friend Matrix operator+(Matrix matrix_A,
-                                const T value) {
+                                const T value)
+        {
             return matrix_A += value;
         }
 
         friend Matrix operator-(Matrix matrix_A,
-                                const T value) {
+                                const T value)
+        {
             return matrix_A -= value;
         }
 
         friend Matrix operator*(Matrix matrix_A,
-                                const T value) {
+                                const T value)
+        {
             return matrix_A *= value;
         }
 
         friend Matrix operator/(Matrix matrix_A,
-                                const T value) {
-            if (value) {
-                matrix_A /= value;
-            } else {
-                std::cout << "Division by zero" << std::endl;
+                                const T value)
+        {
+            try
+            {
+                if(value)
+                {
+                    matrix_A /= value;
+                    return  matrix_A;
+                }
+                else
+                {
+                    Exception_Division exception;
+                    throw exception;
+                }
+            } catch (Exception_Division exception)
+            {
+                std::cout << exception.what() << std::endl;
             }
-            return  matrix_A;
+
         }
 
         friend Matrix operator+(Matrix matrix_A,
-                                const char* string) {
+                                const char* string)
+        {
             if (sizeof(T) > sizeof(int)) {
                 return matrix_A += std::stod(string);
             } else {
@@ -298,7 +381,8 @@ class Matrix {
         }
 
         friend Matrix operator-(Matrix matrix_A,
-                                const char* string) {
+                                const char* string)
+        {
             if (sizeof(T) > sizeof(int)) {
                 return matrix_A -= std::stod(string);
             } else {
@@ -307,8 +391,10 @@ class Matrix {
         }
 
         friend Matrix operator*(Matrix matrix_A,
-                                const char* string) {
-            if (sizeof(T) > sizeof(int)) {
+                                const char* string)
+        {
+            if (sizeof(T) > sizeof(int))
+            {
                 return matrix_A *= std::stod(string);
             } else {
                 return matrix_A *= std::stoi(string);
@@ -316,8 +402,10 @@ class Matrix {
         }
 
         friend Matrix operator/(Matrix matrix_A,
-                                const char* string) {
-            if (sizeof(T) > sizeof(int)) {
+                                const char* string)
+        {
+            if (sizeof(T) > sizeof(int))
+            {
                 return matrix_A /= std::stod(string);
             } else {
                 return matrix_A /= std::stoi(string);
@@ -325,107 +413,134 @@ class Matrix {
         }
 
         friend Matrix operator+(Matrix matrix_A,
-                                const Matrix& matrix_B) {
+                                const Matrix& matrix_B)
+        {
             return matrix_A += matrix_B;
         }
 
         friend Matrix operator-(Matrix matrix_A,
-                                const Matrix& matrix_B) {
+                                const Matrix& matrix_B)
+        {
             return matrix_A -= matrix_B;
         }
 
         friend Matrix operator*(Matrix matrix_A,
-                                const Matrix& matrix_B) {
+                                const Matrix& matrix_B)
+        {
             return matrix_A *= matrix_B;
         };
 
         friend Matrix operator/(Matrix matrix_A,
-                                const Matrix& matrix_B) {
+                                const Matrix& matrix_B)
+        {
             return matrix_A /= matrix_B;
         }
 
-        bool operator>(const Matrix& matrix) {
+        bool operator>(const Matrix& matrix)
+        {
             return get_sum_of_elements() > matrix.get_sum_of_elements();
         }
 
-        bool operator>=(const Matrix& matrix) {
+        bool operator>=(const Matrix& matrix)
+        {
             return get_sum_of_elements() >= matrix.get_sum_of_elements();
         }
 
-        bool operator<(const Matrix& matrix) {
+        bool operator<(const Matrix& matrix)
+        {
             return get_sum_of_elements() < matrix.get_sum_of_elements();
         }
 
-        bool operator<=(const Matrix& matrix) {
+        bool operator<=(const Matrix& matrix)
+        {
             return get_sum_of_elements() <= matrix.get_sum_of_elements();
         }
 
-        bool operator==(const Matrix& matrix) {
+        bool operator==(const Matrix& matrix)
+        {
             return get_sum_of_elements() == matrix.get_sum_of_elements();
         }
 
-        bool operator!=(const Matrix& matrix) {
+        bool operator!=(const Matrix& matrix)
+        {
             return get_sum_of_elements() != matrix.get_sum_of_elements();
         }
 
-        bool operator>(const T value) {
+        bool operator>(const T value)
+        {
             return get_sum_of_elements() > value;
         }
 
-        bool operator>=(const T value) {
+        bool operator>=(const T value)
+        {
             return get_sum_of_elements() >= value;
         }
 
-        bool operator<(const T value) {
+        bool operator<(const T value)
+        {
             return get_sum_of_elements() < value;
         }
 
-        bool operator<=(const T value) {
+        bool operator<=(const T value)
+        {
             return get_sum_of_elements() <= value;
         }
 
-        bool operator==(const T value) {
+        bool operator==(const T value)
+        {
             return get_sum_of_elements() == value;
         }
 
-        bool operator!=(const T value) {
+        bool operator!=(const T value)
+        {
             return get_sum_of_elements() != value;
         }
 
-        double get_determinant () const {
-            if (m_cols == m_rows) {
+        double get_determinant () const
+        {
+            if (m_cols == m_rows)
+            {
                 Matrix temp_matrix(*this);
                 double temp_row[m_cols];
                 double determinant {1};
                 double max_element_of_col;
                 unsigned int max_element_of_col_index;
 
-                for (unsigned int i = 0; i < m_cols; i++) {
-                    if (temp_matrix.m_matrix[i][i]==0) {
+                for (unsigned int i = 0; i < m_cols; i++)
+                {
+                    if (temp_matrix.m_matrix[i][i]==0)
+                    {
                         std::cout << "error determinate = 0" << std::endl;
                         return 0;
                     }
                     max_element_of_col = temp_matrix.m_matrix[i][i];
                     max_element_of_col_index = i;
 
-                    for (unsigned int j = 0; j < m_rows; j++) {
-                        if (temp_matrix.m_matrix[j][i] > max_element_of_col) {
+                    for (unsigned int j = 0; j < m_rows; j++)
+                    {
+                        if (temp_matrix.m_matrix[j][i] > max_element_of_col)
+                        {
                             max_element_of_col = temp_matrix.m_matrix[j][i];
                             max_element_of_col_index = j;
                         }
                     }
-                    if (i != max_element_of_col_index) {
+                    if (i != max_element_of_col_index)
+                    {
                         determinant *= -1;
-                        for (unsigned int j = 0; j < m_cols; j++) {
+                        for (unsigned int j = 0; j < m_cols; j++)
+                        {
                             temp_row[j] = temp_matrix.m_matrix[max_element_of_col_index][j];
                             temp_matrix.m_matrix[max_element_of_col_index][j] = temp_matrix.m_matrix[i][j];
                             temp_matrix.m_matrix[i][j] = temp_row[j];
                         }
                     }
-                    for (unsigned int j = i + 1; j < m_rows; j++) {
-                        if (temp_matrix.m_matrix[j][i] != 0) {
+                    for (unsigned int j = i + 1; j < m_rows; j++)
+                    {
+                        if (temp_matrix.m_matrix[j][i] != 0)
+                        {
                             double multiplier = 1/temp_matrix.m_matrix[i][i] * temp_matrix.m_matrix[j][i];
-                            for (unsigned int k = 0; k < m_cols; k++) {
+                            for (unsigned int k = 0; k < m_cols; k++)
+                            {
                                  temp_matrix.m_matrix[j][k] -= temp_matrix.m_matrix[i][k]*multiplier;
                             }
                          }
@@ -433,68 +548,89 @@ class Matrix {
                      determinant *= temp_matrix.m_matrix[i][i];
                 }
                 return determinant;
-            } else {
+            } else
+            {
                 std::cout << "error nonsquare matrix" << std::endl;
                 return 0;
             }
         }
 
-        Matrix get_tranposed_matrix() const {
+        Matrix get_tranposed_matrix() const
+        {
             Matrix transposed_matrix (m_cols, m_rows);
-            for (unsigned int i = 0; i < m_cols; i++) {
-                for (unsigned int j = 0; j < m_rows; j++) {
+            for (unsigned int i = 0; i < m_cols; i++)
+            {
+                for (unsigned int j = 0; j < m_rows; j++)
+                {
                     transposed_matrix.set_element(i,j,m_matrix[j][i]);
                 }
             }
             return transposed_matrix;
         }
 
-        Matrix get_inverse_matrix() const {
+        Matrix get_inverse_matrix() const
+        {
             Matrix inverse_matrix(m_rows,m_cols);
-            for (unsigned int i = 0; i < m_cols; i++) {
+            for (unsigned int i = 0; i < m_cols; i++)
+            {
                 inverse_matrix.m_matrix[i][i] = 1;
             }
-            if (get_determinant()) {
+            if (get_determinant())
+            {
                 Matrix temp_matrix(*this);
                 double temp_element;
-                for (unsigned int i = 0; i < m_cols; i++) {
-                    if (temp_matrix.m_matrix[i][i] != 1) {
+                for (unsigned int i = 0; i < m_cols; i++)
+                {
+                    if (temp_matrix.m_matrix[i][i] != 1)
+                    {
                         temp_element = temp_matrix.m_matrix[i][i];
-                        for (unsigned int j = 0; j < m_cols; j++) {
+                        for (unsigned int j = 0; j < m_cols; j++)
+                        {
                             temp_matrix.m_matrix[i][j] /= temp_element;
                             inverse_matrix.m_matrix[i][j] /= temp_element;
                         }
                     }
-                    for (unsigned int j = i + 1; j < m_rows; j++) {
-                        if (temp_matrix.m_matrix[j][i]) {
+                    for (unsigned int j = i + 1; j < m_rows; j++)
+                    {
+                        if (temp_matrix.m_matrix[j][i])
+                        {
                             temp_element = -temp_matrix.m_matrix[j][i];
-                            for (unsigned int k = 0; k < m_cols; k++) {
+                            for (unsigned int k = 0; k < m_cols; k++)
+                            {
                                  temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
                                  inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
                             }
                          }
                     }
-                    for (int j = i - 1; j >= 0; j--) {
-                        if (temp_matrix.m_matrix[j][i]) {
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        if (temp_matrix.m_matrix[j][i])
+                        {
                             temp_element = -temp_matrix.m_matrix[j][i];
-                            for (unsigned int k = 0; k < m_cols; k++) {
+                            for (unsigned int k = 0; k < m_cols; k++)
+                            {
                                  temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
                                  inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
                             }
                         }
                     }
                 }
-                } else {
+                } else
+            {
                 std::cout << "error inverse matrix, det = 0" << std::endl;
             }
             return inverse_matrix;
         }
 
-        void print_in_string() const {
-            if (m_matrix != nullptr) {
+        void print_in_string() const
+        {
+            if (m_matrix != nullptr)
+            {
                 std::cout << "\n[ ";
-                for (unsigned int i = 0; i < m_rows; i++) {
-                    for (unsigned int j = 0; j < m_cols; j++) {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
+                    for (unsigned int j = 0; j < m_cols; j++)
+                    {
                         std::cout << m_matrix[i][j] << ", ";
                     }
                     std::cout <<"; ";
@@ -510,27 +646,48 @@ class Matrix {
         size_t m_cols{0};
 
         T **m_matrix = nullptr;
-        void set_value(const T value) {
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
+        void set_value(const T value)
+        {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
                     m_matrix[i][j] = value;
                 }
             }
         };
 
-        void get_memory(size_t rows, size_t cols) {
-            if (m_matrix == nullptr) {
-                m_matrix = new T *[rows];
-                for (unsigned int i = 0; i < rows; i++) {
-                    m_matrix[i] = new T [cols]{0};
+        void get_memory(size_t rows, size_t cols)
+        {
+            if (m_matrix == nullptr)
+            {
+                try {
+                    if(m_matrix = new T *[rows])
+                    {
+                        for (unsigned int i = 0; i < rows; i++)
+                        {
+                            m_matrix[i] = new T [cols]{0};
+                        }
+                    }
+                    else
+                    {
+                        Exception_Memory error_memory;
+                        throw error_memory;
+                    }
+                } catch (Exception_Memory exception)
+                {
+                    std::cout << exception.what() << std::endl;
                 }
             }
         };
-        void clear_memory() {
+        void clear_memory()
+        {
             m_cols = 0;
             m_rows = 0;
-            if (m_matrix != nullptr) {
-                for (unsigned int i = 0; i < m_rows; i++) {
+            if (m_matrix != nullptr)
+            {
+                for (unsigned int i = 0; i < m_rows; i++)
+                {
                     delete[] m_matrix[i];
                 }
                 delete[] m_matrix;
@@ -538,21 +695,28 @@ class Matrix {
             }
         };
 
-        T get_sum_of_elements() const {
+        T get_sum_of_elements() const
+        {
             T sum {0};
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
                    sum += m_matrix[i][j];
                 }
             }
             return sum;
         };
 
-        T get_max_element() const {
+        T get_max_element() const
+        {
             T max_elemet {0};
-            for (unsigned int i = 0; i < m_rows; i++) {
-                for (unsigned int j = 0; j < m_cols; j++) {
-                   if (m_matrix[i][j] > max_elemet) {
+            for (unsigned int i = 0; i < m_rows; i++)
+            {
+                for (unsigned int j = 0; j < m_cols; j++)
+                {
+                   if (m_matrix[i][j] > max_elemet)
+                   {
                        max_elemet = m_matrix[i][j];
                    }
                 }

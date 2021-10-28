@@ -26,7 +26,7 @@ int main()
     Matrix<double> test_del(4,4);
 
     test.print_in_string();
-    test /= test2;
+     test = test/ 0;
 //    test_del.print_in_string();
     test_del = test / test2;
 
