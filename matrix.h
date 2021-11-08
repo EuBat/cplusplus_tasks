@@ -297,7 +297,7 @@ class Matrix
         {
             try
             {
-                if (m_cols == matrix.m_rows)
+                if(m_cols == matrix.m_rows)
                 {
                     Matrix temp_matrix(m_rows,matrix.m_cols);
                     T temp_element;
@@ -315,9 +315,14 @@ class Matrix
                     }
                     *this = temp_matrix;
                 } else {
-                    throw Exception_Matrix_Multiple
+                    throw Exception_Matrix_Multiple(m_rows, m_cols, matrix.m_rows, matrix.m_cols);
                     std::cout << "Multiplication error" << std::endl;
                 }
+                return *this;
+            }
+            catch(Exception_Matrix_Multiple exception)
+            {
+                exception.what();
                 return *this;
             }
         }
