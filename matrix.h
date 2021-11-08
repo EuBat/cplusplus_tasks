@@ -295,47 +295,37 @@ class Matrix
 
         Matrix& operator*=(const Matrix& matrix)
         {
-            if (m_cols == matrix.m_rows)
+            try
             {
-                Matrix temp_matrix(m_rows,matrix.m_cols);
-                T temp_element;
-                for (unsigned int i = 0; i < m_rows; i++)
+                if (m_cols == matrix.m_rows)
                 {
-                    for (unsigned int j = 0; j < matrix.m_cols; j++)
+                    Matrix temp_matrix(m_rows,matrix.m_cols);
+                    T temp_element;
+                    for (unsigned int i = 0; i < m_rows; i++)
                     {
-                        temp_element = 0;
-                        for (unsigned int k = 0; k < m_cols; k++)
+                        for (unsigned int j = 0; j < matrix.m_cols; j++)
                         {
-                            temp_element += m_matrix[i][k] * matrix.m_matrix[k][j];
+                            temp_element = 0;
+                            for (unsigned int k = 0; k < m_cols; k++)
+                            {
+                                temp_element += m_matrix[i][k] * matrix.m_matrix[k][j];
+                            }
+                            temp_matrix.m_matrix[i][j] = temp_element;
                         }
-                        temp_matrix.m_matrix[i][j] = temp_element;
                     }
+                    *this = temp_matrix;
+                } else {
+                    throw Exception_Matrix_Multiple
+                    std::cout << "Multiplication error" << std::endl;
                 }
-                *this = temp_matrix;
-            } else {
-                std::cout << "Multiplication error" << std::endl;
+                return *this;
             }
-            return *this;
         }
 
         Matrix& operator/=(const Matrix& matrix)
         {
-            try
-            {
-                if (m_rows == m_cols)
-                {
-                    *this *= matrix.get_inverse_matrix();
-                    return *this;
-                } else
-                {
-                    throw Exception_Matrix_Size(m_rows,m_cols);
-                }
-
-            }catch (Exception_Matrix_Size & exception)
-            {
-                exception.what();
-            }
-
+            *this *= matrix.get_inverse_matrix();
+            return *this;
         }
 
         friend Matrix operator+(Matrix matrix_A,
@@ -506,60 +496,65 @@ class Matrix
 
         double get_determinant () const
         {
-            if (m_cols == m_rows)
+            try
             {
-                Matrix temp_matrix(*this);
-                double temp_row[m_cols];
-                double determinant {1};
-                double max_element_of_col;
-                unsigned int max_element_of_col_index;
-
-                for (unsigned int i = 0; i < m_cols; i++)
+                if (m_cols == m_rows)
                 {
-                    if (temp_matrix.m_matrix[i][i]==0)
-                    {
-                        std::cout << "error determinate = 0" << std::endl;
-                        return 0;
-                    }
-                    max_element_of_col = temp_matrix.m_matrix[i][i];
-                    max_element_of_col_index = i;
+                    Matrix temp_matrix(*this);
+                    double temp_row[m_cols];
+                    double determinant {1};
+                    double max_element_of_col;
+                    unsigned int max_element_of_col_index;
 
-                    for (unsigned int j = 0; j < m_rows; j++)
+                    for (unsigned int i = 0; i < m_cols; i++)
                     {
-                        if (temp_matrix.m_matrix[j][i] > max_element_of_col)
+                        if (temp_matrix.m_matrix[i][i]==0)
                         {
-                            max_element_of_col = temp_matrix.m_matrix[j][i];
-                            max_element_of_col_index = j;
+                            return 0;
                         }
-                    }
-                    if (i != max_element_of_col_index)
-                    {
-                        determinant *= -1;
-                        for (unsigned int j = 0; j < m_cols; j++)
+                        max_element_of_col = temp_matrix.m_matrix[i][i];
+                        max_element_of_col_index = i;
+
+                        for (unsigned int j = 0; j < m_rows; j++)
                         {
-                            temp_row[j] = temp_matrix.m_matrix[max_element_of_col_index][j];
-                            temp_matrix.m_matrix[max_element_of_col_index][j] = temp_matrix.m_matrix[i][j];
-                            temp_matrix.m_matrix[i][j] = temp_row[j];
-                        }
-                    }
-                    for (unsigned int j = i + 1; j < m_rows; j++)
-                    {
-                        if (temp_matrix.m_matrix[j][i] != 0)
-                        {
-                            double multiplier = 1/temp_matrix.m_matrix[i][i] * temp_matrix.m_matrix[j][i];
-                            for (unsigned int k = 0; k < m_cols; k++)
+                            if (temp_matrix.m_matrix[j][i] > max_element_of_col)
                             {
-                                 temp_matrix.m_matrix[j][k] -= temp_matrix.m_matrix[i][k]*multiplier;
+                                max_element_of_col = temp_matrix.m_matrix[j][i];
+                                max_element_of_col_index = j;
                             }
+                        }
+                        if (i != max_element_of_col_index)
+                        {
+                            determinant *= -1;
+                            for (unsigned int j = 0; j < m_cols; j++)
+                            {
+                                temp_row[j] = temp_matrix.m_matrix[max_element_of_col_index][j];
+                                temp_matrix.m_matrix[max_element_of_col_index][j] = temp_matrix.m_matrix[i][j];
+                                temp_matrix.m_matrix[i][j] = temp_row[j];
+                            }
+                        }
+                        for (unsigned int j = i + 1; j < m_rows; j++)
+                        {
+                            if (temp_matrix.m_matrix[j][i] != 0)
+                            {
+                                double multiplier = 1/temp_matrix.m_matrix[i][i] * temp_matrix.m_matrix[j][i];
+                                for (unsigned int k = 0; k < m_cols; k++)
+                                {
+                                     temp_matrix.m_matrix[j][k] -= temp_matrix.m_matrix[i][k]*multiplier;
+                                }
+                             }
                          }
-                     }
-                     determinant *= temp_matrix.m_matrix[i][i];
+                         determinant *= temp_matrix.m_matrix[i][i];
+                    }
+                    return determinant;
+                } else
+                {
+                    throw Exception_Matrix_non_square(m_rows, m_cols);
                 }
-                return determinant;
-            } else
+            }
+            catch(Exception_Matrix_non_square exception)
             {
-                std::cout << "error nonsquare matrix" << std::endl;
-                return 0;
+                exception.what();
             }
         }
 
@@ -578,56 +573,64 @@ class Matrix
 
         Matrix get_inverse_matrix() const
         {
-            Matrix inverse_matrix(m_rows,m_cols);
-            for (unsigned int i = 0; i < m_cols; i++)
+            try
             {
-                inverse_matrix.m_matrix[i][i] = 1;
-            }
-            if (get_determinant())
-            {
-                Matrix temp_matrix(*this);
-                double temp_element;
-                for (unsigned int i = 0; i < m_cols; i++)
+                if (m_cols == m_rows)
                 {
-                    if (temp_matrix.m_matrix[i][i] != 1)
+                    Matrix inverse_matrix(m_rows, m_cols);
+                    for (unsigned int i = 0; i < m_cols; i++)
                     {
-                        temp_element = temp_matrix.m_matrix[i][i];
-                        for (unsigned int j = 0; j < m_cols; j++)
-                        {
-                            temp_matrix.m_matrix[i][j] /= temp_element;
-                            inverse_matrix.m_matrix[i][j] /= temp_element;
-                        }
+                        inverse_matrix.m_matrix[i][i] = 1;
                     }
-                    for (unsigned int j = i + 1; j < m_rows; j++)
+                    Matrix temp_matrix(*this);
+                    double temp_element;
+                    for (unsigned int i = 0; i < m_cols; i++)
                     {
-                        if (temp_matrix.m_matrix[j][i])
+                        if (temp_matrix.m_matrix[i][i] != 1)
                         {
-                            temp_element = -temp_matrix.m_matrix[j][i];
-                            for (unsigned int k = 0; k < m_cols; k++)
+                            temp_element = temp_matrix.m_matrix[i][i];
+                            for (unsigned int j = 0; j < m_cols; j++)
                             {
-                                 temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
-                                 inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
-                            }
-                         }
-                    }
-                    for (int j = i - 1; j >= 0; j--)
-                    {
-                        if (temp_matrix.m_matrix[j][i])
-                        {
-                            temp_element = -temp_matrix.m_matrix[j][i];
-                            for (unsigned int k = 0; k < m_cols; k++)
-                            {
-                                 temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
-                                 inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
+                                temp_matrix.m_matrix[i][j] /= temp_element;
+                                inverse_matrix.m_matrix[i][j] /= temp_element;
                             }
                         }
+                        for (unsigned int j = i + 1; j < m_rows; j++)
+                        {
+                            if (temp_matrix.m_matrix[j][i])
+                            {
+                                temp_element = -temp_matrix.m_matrix[j][i];
+                                for (unsigned int k = 0; k < m_cols; k++)
+                                {
+                                     temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
+                                     inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
+                                }
+                             }
+                        }
+                        for (int j = i - 1; j >= 0; j--)
+                        {
+                            if (temp_matrix.m_matrix[j][i])
+                            {
+                                temp_element = -temp_matrix.m_matrix[j][i];
+                                for (unsigned int k = 0; k < m_cols; k++)
+                                {
+                                     temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
+                                     inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
+                                }
+                            }
+                        }
                     }
-                }
+                    return inverse_matrix;
                 } else
-            {
-                std::cout << "error inverse matrix, det = 0" << std::endl;
+                {
+                    throw Exception_Matrix_non_square(m_rows, m_cols);
+                }
             }
-            return inverse_matrix;
+            catch (Exception_Matrix_non_square exception)
+            {
+                exception.what();
+            }
+
         }
 
         void print_in_string() const

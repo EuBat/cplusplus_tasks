@@ -21,23 +21,21 @@ public:
 private:
 };
 
-class Exception_Matrix_Size : public Matrix_Exceprions
+class Exception_Matrix_non_square : public Matrix_Exceprions
 {
 public:
-    Exception_Matrix_Size(size_t rows, size_t cols)
-        : m_rows(rows),
-          m_cols(cols) {};
-    virtual ~Exception_Matrix_Size(){};
+    Exception_Matrix_non_square(size_t rows, size_t cols)
+    virtual ~Exception_Matrix_non_square(){};
     void what() const override
     {
-        std::cerr << "Matrix must be square\n"
-                  << "\ncurrent size"
+        std::cerr << "\nError. Matrix A is not-square. Determinate and inverse matrix of A does not exist"
+                  << "\nMatrix A size"
                   << "\nrows:   " << m_rows
                   << "\ncols:   " << m_cols << std::endl;
     }
 private:
-    size_t m_rows{0};
-    size_t m_cols{0};
+    size_t m_rows;
+    size_t m_cols;
 };
 
 class Exception_Matrix_Multiple : public Matrix_Exceprions
