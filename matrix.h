@@ -320,14 +320,22 @@ class Matrix
 
         Matrix& operator/=(const Matrix& matrix)
         {
-            if (m_rows == m_cols)
+            try
             {
-                *this *= matrix.get_inverse_matrix();
-            } else
+                if (m_rows == m_cols)
+                {
+                    *this *= matrix.get_inverse_matrix();
+                    return *this;
+                } else
+                {
+                    throw Exception_Matrix_Size(m_rows,m_cols);
+                }
+
+            }catch (Exception_Matrix_Size & exception)
             {
-                std::cout << "Division error" << std::endl;
+                exception.what();
             }
-            return *this;
+
         }
 
         friend Matrix operator+(Matrix matrix_A,
@@ -351,23 +359,23 @@ class Matrix
         friend Matrix operator/(Matrix matrix_A,
                                 const T value)
         {
-            try
-            {
+            try {
                 if(value)
                 {
-                    matrix_A /= value;
-                    return  matrix_A;
+                  matrix_A /= value;
+                  return  matrix_A;
                 }
                 else
                 {
-                    Exception_Division exception;
-                    throw exception;
+                  throw Exception_Division_By_Zero();
                 }
-            } catch (Exception_Division exception)
-            {
-                std::cout << exception.what() << std::endl;
             }
-
+            catch (Exception_Division_By_Zero &exception)
+            {
+                exception.what();
+                exit(1);
+                return matrix_A;
+            }
         }
 
         friend Matrix operator+(Matrix matrix_A,
@@ -676,7 +684,7 @@ class Matrix
                     }
                 } catch (Exception_Memory exception)
                 {
-                    std::cout << exception.what() << std::endl;
+                    exception.what();
                 }
             }
         };

@@ -21,14 +21,20 @@ int main()
     double arr4[2][4] {{-2,4,1,9},
                       {-5,2,1,7}};
 
+    double arr5[5][2] {{1,-3},
+                       {7,-1},
+                       {3,-4},
+                       {5,-6},
+                       {3,8}};
+
     Matrix<double> test(&arr1[0][0],4,4);
-    Matrix<double> test2(&arr2[0][0],4,4);
+    Matrix<double> test2(&arr3[0][0],5,2);
     Matrix<double> test_del(4,4);
 
     test.print_in_string();
-     test = test/ 0;
+    test2 /= test;
 //    test_del.print_in_string();
-    test_del = test / test2;
+//    test_del = test / test2;
 
     test.print_in_string();
     test_del.print_in_string();
