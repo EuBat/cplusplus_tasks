@@ -2,13 +2,6 @@
 
 #include <iostream>
 
-//class Matrix_Exceprions
-//{
-//public:
-//    virtual ~Matrix_Exceprions() {};
-//    virtual void what() const = 0;
-//};
-
 class Division_By_Zero_Exception : public std::exception
 {
 public:
@@ -18,6 +11,9 @@ public:
     virtual const char* what() const noexcept override
     {
         std::cerr << "Division by zero" << std::endl;
+
+    // предупреждение, если нет возвращаемого значения
+        return 0;
     };
 private:
 };
@@ -25,64 +21,103 @@ private:
 class Non_Square_Matrix_Exception : public std::exception
 {
 public:
-    Non_Square_Matrix_Exception(size_t rows, size_t cols)
-        : m_rows(rows),
+    Non_Square_Matrix_Exception(std::string message, size_t rows, size_t cols)
+        : m_message(message),
+          m_rows(rows),
           m_cols(cols) {};
 
     virtual const char* what() const noexcept override
     {
-        std::cerr << "\nError. Matrix A is not-square. Determinate and inverse matrix of A does not exist"
+        std::cerr << "\nError   ." << m_message
                   << "\nMatrix A size"
                   << "\nrows:   " << m_rows
                   << "\ncols:   " << m_cols << std::endl;
+        return 0;
     };
 private:
+    std::string m_message;
     size_t m_rows;
     size_t m_cols;
 };
 
-class Un_Memory_Exception : public std::exception
+class Matrics_Wrong_Size_Exception : public std::exception
 {
-    public:
-        Non_Memory_Exception(){}
-        virtual const char * what() const noexcept override
-        {
-            std::cerr << "No"
-        };
-}
-//{
-//public:
-//    Exception_Matrix_Multiple(size_t A_rows, size_t A_cols, size_t B_rows, size_t B_cols)
-//        : m_A_rows(A_rows),
-//          m_A_cols(A_cols),
-//          m_B_rows(B_rows),
-//          m_B_cols(B_cols) {};
-//    virtual ~Exception_Matrix_Multiple(){};
-//    void what() const override
-//    {
-//        std::cerr << "\nError. Matrix miltiplication AxB can't be complete"
-//                  << "\nMatrix A size"
-//                  << "\nrows:   " << m_A_rows
-//                  << "\ncols:   " << m_A_cols
-//                  << "\n\nMatrix B size"
-//                  << "\nrows:   " << m_B_rows
-//                  << "\ncols:   " << m_B_cols << std::endl;
-//    }
-//private:
-//    size_t m_A_rows{0};
-//    size_t m_A_cols{0};
-//    size_t m_B_rows{0};
-//    size_t m_B_cols{0};
-//};
+public:
+    Matrics_Wrong_Size_Exception(const std::string& message, size_t Matrix_A_rows, size_t Matrix_A_cols,
+                                                               size_t Matrix_B_rows, size_t Matrix_B_cols)
+        :m_message(message),
+         m_Matrix_A_cols(Matrix_A_cols), m_Matrix_A_rows(Matrix_A_rows),
+         m_Matrix_B_cols(Matrix_B_cols), m_Matrix_B_rows(Matrix_B_rows){};
 
-//class Exception_Memory : public Matrix_Exceprions
-//{
-//public:
-//    Exception_Memory(){};
-//    virtual ~Exception_Memory(){};
-//    void what() const override
-//    {
-//        std::cout << "Some error with memory" << std::endl;
-//    }
-//private:
-//};
+    virtual const char* what() const noexcept override
+    {
+        std::cerr << "\nError.  " << m_message
+                  << "\nMatrix A size"
+                  << "\nrows:   " << m_Matrix_A_rows
+                  << "\ncols:   " << m_Matrix_A_cols
+                  << "\n\nMatrix B size"
+                  << "\nrows:   " << m_Matrix_B_rows
+                  << "\ncols:   " << m_Matrix_B_cols << std::endl;
+        return 0;
+    }
+private:
+    std::string m_message;
+    size_t m_Matrix_A_cols;
+    size_t m_Matrix_A_rows;
+    size_t m_Matrix_B_cols;
+    size_t m_Matrix_B_rows;
+
+};
+
+class Non_Digit_Exception : public std::exception
+{
+public:
+    Non_Digit_Exception(const char symbol)
+        :m_symbol(symbol){};
+
+    virtual const char * what() const noexcept override
+    {
+        std::cerr << "\nError. Symbol \"" << m_symbol << "\"  is not a digit" << std::endl;
+        return 0;
+    };
+
+private:
+    const char m_symbol;
+};
+
+
+template <typename T>
+class Overflow_Exception : public std::overflow_error
+{
+public:
+    Overflow_Exception(const std::string& message, const T arg_A,const T arg_B)
+        : m_message(message), m_arg_A(arg_A), m_arg_B(arg_B){};
+
+    virtual const char* what() const noexcept override
+    {
+        std::cerr << "\nOverflow error in" << m_message << "\nArgument 1:" << m_arg_A << "\nArgument 2" << m_arg_B << std::endl;
+        return 0;
+    };
+private:
+    std::string m_message;
+    T m_arg_A;
+    T m_arg_B;
+};
+
+template <typename T>
+class Underflow_Exception : public std::underflow_error
+{
+public:
+    Underflow_Exception(const std::string& message, const T arg_A,const T arg_B)
+        : m_message(message), m_arg_A(arg_A), m_arg_B(arg_B){};
+
+    virtual const char* what() const noexcept override
+    {
+        std::cerr << "\nUnderflow error in" << m_message << "\nArgument 1:" << m_arg_A << "\nArgument 2" << m_arg_B << std::endl;
+        return 0;
+    };
+private:
+    std::string m_message;
+    T m_arg_A;
+    T m_arg_B;
+};
