@@ -214,12 +214,16 @@ class Matrix
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
-            if((((value > 0) && (matrix_max_value > 0) && (matrix_max_value > std::numeric_limits<T>::max() / value ))) ||
-               (((value < 0) && (matrix_min_value < 0) && (matrix_min_value > std::numeric_limits<T>::max() / value ))) )
+            if((value > 0) && (matrix_max_value > 0) && (matrix_max_value > std::numeric_limits<T>::max() / value ))
             {
                 throw Overflow_Exception<T>("with operator *=", matrix_max_value, value);
-            } else if (((value < 0) && (matrix_max_value > 0) && (matrix_max_value < std::numeric_limits<T>::min() / value)) ||
-                       ((value > 0) && (matrix_min_value < 0) && (matrix_min_value < std::numeric_limits<T>::min() / value)))
+            } else if((value < 0) && (matrix_min_value < 0) && (matrix_min_value < std::numeric_limits<T>::max() / value ))
+            {
+                 throw Overflow_Exception<T>("with operator *=", matrix_min_value, value);
+            }else if ((value < 0) && (matrix_max_value > 0) && (matrix_max_value > std::numeric_limits<T>::min() / value))
+            {
+                throw Underflow_Exception<T>("with operator *=",matrix_max_value, value);
+            }else if ((value > 0) && (matrix_min_value < 0) && (matrix_min_value < std::numeric_limits<T>::min() / value))
             {
                 throw Underflow_Exception<T>("with operator *=",matrix_min_value, value);
             }
@@ -263,10 +267,10 @@ class Matrix
 
                 if((matrix_B_max_value > 0) && (matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_max_value))
                 {
-                    throw Overflow_Exception<T>("with operator +=", matrix_A_max_value, matrix_B_max_value);
+                    throw Overflow_Exception<T>(" with operator +=", matrix_A_max_value, matrix_B_max_value);
                 } else if ((matrix_B_max_value < 0) && (matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value))
                 {
-                    throw Underflow_Exception<T>("with operator +=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception<T>(" with operator +=", matrix_A_min_value, matrix_B_max_value);
                 }
 
                 for(unsigned int i = 0; i < m_rows; i++)
@@ -278,7 +282,7 @@ class Matrix
                 }
             } else
             {
-                throw Matrics_Wrong_Size_Exception("Additional error.Different size od matrics", m_rows, m_cols, matrix.m_rows, matrix.m_cols);
+                throw Matrics_Wrong_Size_Exception("Additional error. Matrices have different sizes", m_rows, m_cols, matrix.m_rows, matrix.m_cols);
             }
             return *this;
         }
@@ -310,7 +314,7 @@ class Matrix
                 }
             } else
             {
-                throw Matrics_Wrong_Size_Exception("Difference error. Different size od matrics.", m_rows, m_cols, matrix.m_rows, matrix.m_cols);
+                throw Matrics_Wrong_Size_Exception("Difference error. Matrices have different sizes.", m_rows, m_cols, matrix.m_rows, matrix.m_cols);
             }
             return *this;
         }
@@ -355,6 +359,14 @@ class Matrix
             } catch (Matrics_Wrong_Size_Exception& exception)
             {
                 exception.what();
+            } catch (Division_By_Zero_Exception& exception)
+            {
+                exception.what();
+            } catch(...)
+            {
+                clear_memory();
+                std::cerr << "\n Unknow error" << std::endl;
+                throw;
             }
         }
 
@@ -363,7 +375,13 @@ class Matrix
         {
             try {
                 return matrix_A += value;
-            } catch (std::exception& exception)
+            } catch (Matrics_Wrong_Size_Exception& exception)
+            {
+                exception.what();
+            } catch (Overflow_Exception<T>& exception)
+            {
+                exception.what();
+            } catch (Underflow_Exception<T>& exception)
             {
                 exception.what();
             }
@@ -765,7 +783,12 @@ class Matrix
                     }
                 } catch (std::bad_alloc& memory_exception)
                 {
+                    clear_memory();
                     memory_exception.what();
+                } catch(...)
+                {
+                    clear_memory();
+                    std::cerr << "\nUnknow memory error";
                 }
             } else
             {

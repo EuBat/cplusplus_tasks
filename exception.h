@@ -7,7 +7,6 @@ class Division_By_Zero_Exception : public std::exception
 public:
     Division_By_Zero_Exception(){};
 
-    //virtual const char* what() const throw()
     virtual const char* what() const noexcept override
     {
         std::cerr << "Division by zero" << std::endl;
@@ -44,10 +43,13 @@ class Matrics_Wrong_Size_Exception : public std::exception
 {
 public:
     Matrics_Wrong_Size_Exception(const std::string& message, size_t Matrix_A_rows, size_t Matrix_A_cols,
-                                                               size_t Matrix_B_rows, size_t Matrix_B_cols)
+                                                             size_t Matrix_B_rows, size_t Matrix_B_cols)
         :m_message(message),
          m_Matrix_A_cols(Matrix_A_cols), m_Matrix_A_rows(Matrix_A_rows),
          m_Matrix_B_cols(Matrix_B_cols), m_Matrix_B_rows(Matrix_B_rows){};
+
+//    Matrics_Wrong_Size_Exception(const std::stg mesasge, size_t Matrix_A_rows, size_t Matrix_A_cols):
+//        :m_message(message);
 
     virtual const char* what() const noexcept override
     {
@@ -87,37 +89,45 @@ private:
 
 
 template <typename T>
-class Overflow_Exception : public std::overflow_error
+class Overflow_Exception : public std::exception
 {
 public:
     Overflow_Exception(const std::string& message, const T arg_A,const T arg_B)
         : m_message(message), m_arg_A(arg_A), m_arg_B(arg_B){};
 
+    Overflow_Exception(const std::string& message)
+        : m_message(message){};
     virtual const char* what() const noexcept override
     {
-        std::cerr << "\nOverflow error in" << m_message << "\nArgument 1:" << m_arg_A << "\nArgument 2" << m_arg_B << std::endl;
+        std::cerr << m_message
+                  << "\nArgument 1: " << m_arg_A
+                  << "\nArgument 2: " << m_arg_B << std::endl;
         return 0;
     };
 private:
-    std::string m_message;
+    std::string m_message{"no messege"};
     T m_arg_A;
     T m_arg_B;
 };
 
 template <typename T>
-class Underflow_Exception : public std::underflow_error
+class Underflow_Exception : public std::exception
 {
 public:
     Underflow_Exception(const std::string& message, const T arg_A,const T arg_B)
         : m_message(message), m_arg_A(arg_A), m_arg_B(arg_B){};
 
+    Underflow_Exception(const std::string& message)
+        : m_message(message){};
     virtual const char* what() const noexcept override
     {
-        std::cerr << "\nUnderflow error in" << m_message << "\nArgument 1:" << m_arg_A << "\nArgument 2" << m_arg_B << std::endl;
+        std::cerr << m_message
+                  << "\nArgument 1: " << m_arg_A
+                  << "\nArgument 2: " << m_arg_B << std::endl;
         return 0;
     };
 private:
-    std::string m_message;
+    std::string m_message{"no messege"};
     T m_arg_A;
     T m_arg_B;
 };
