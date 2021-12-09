@@ -762,6 +762,11 @@ class Matrix
             {
                 throw Non_Square_Matrix_Exception("Matrix is not-square. Inverse matrix does not exist", m_rows, m_cols);
             }
+        };
+
+        void set_value(const int row, const int col, const T value)
+        {
+            m_matrix[row][col] = value;
         }
 
         void print_in_string() const
