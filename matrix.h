@@ -694,7 +694,7 @@ class Matrix
                 {
                     for(int j = 0; j < m_rows; j++)
                     {
-                        transposed_matrix.set_element(i,j,m_matrix[j][i]);
+                        transposed_matrix.m_matrix[i][j] = m_matrix[j][i];
                     }
                 }
                 return transposed_matrix;
