@@ -1,8 +1,9 @@
 #pragma once
+
 #include <iostream>
 #include <cstring>
 #include <limits>
-#include "exception.h"
+#include "matrix_exception.h"
 
 template <typename T>
 class Matrix
@@ -13,7 +14,7 @@ class Matrix
         clear_memory();
         };
 
-        Matrix(const size_t rows, const size_t cols)
+        Matrix(const size_t rows, const size_t cols) throw(std::bad_alloc)
                 : m_rows(rows),
                   m_cols(cols)
         {
@@ -34,9 +35,9 @@ class Matrix
               m_cols(cols)
         {
             get_memory(m_rows,m_cols);
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                     m_matrix[i][j] = *(numeric_2D_array + i * m_cols + j);
                 }
@@ -55,11 +56,9 @@ class Matrix
 
             bool flag_no_letter {true};
             unsigned int iter {0};
-            // зачем нагружать интерфес? пользователя. Ему же просто надо вызвать функцию или конструктор.
-            //
             while(tokens != nullptr && flag_no_letter)
             {
-                for(unsigned int i = 0; i < std::strlen(tokens); i++)
+                for(int i = 0; i < std::strlen(tokens); i++)
                 {
                     if(!std::isdigit(tokens[i]) && tokens[i] != '.' )
                     {
@@ -83,9 +82,9 @@ class Matrix
             if(flag_no_letter)
             {
                 get_memory(m_rows, m_cols);
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    for(int j = 0; j < m_cols; j++)
                     {
                         m_matrix[i][j] = matrix_temp[i * m_rows+j];
                     }
@@ -108,9 +107,9 @@ class Matrix
                 m_rows = lhs_matrix.m_rows;
                 m_cols = lhs_matrix.m_cols;
                 get_memory(m_rows, m_cols);
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    for(int j = 0; j < m_cols; j++)
                     {
                         m_matrix[i][j] = lhs_matrix.m_matrix[i][j];
                     }
@@ -140,9 +139,9 @@ class Matrix
                 m_rows = lhs_matrix.m_rows;
                 m_cols = lhs_matrix.m_cols;
                 get_memory(m_rows, m_cols);
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    for(int j = 0; j < m_cols; j++)
                     {
                         m_matrix[i][j] = lhs_matrix.m_matrix[i][j];
                     }
@@ -163,22 +162,22 @@ class Matrix
             return *this;
         };
 
-        Matrix& operator+=(const T value)
+        Matrix& operator+=(const T value) throw(Overflow_Exception<T>, Underflow_Exception<T>)
         {
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
-            if((value > 0) && (matrix_max_value > std::numeric_limits<T>::max() - value))
+            if(value > 0 && matrix_max_value > std::numeric_limits<T>::max() - value)
             {
-                throw Overflow_Exception<T>("with operator +=", matrix_max_value, value);
-            } else if ((value < 0) && (matrix_min_value < std::numeric_limits<T>::min() - value))
+                throw Overflow_Exception<T>("Oveflow with operator +=", matrix_max_value, value);
+            } else if (value < 0 && matrix_min_value < std::numeric_limits<T>::min() - value)
             {
-                throw Underflow_Exception<T>("with operator +=", matrix_min_value, value);
+                throw Underflow_Exception<T>("Underflow with operator +=", matrix_min_value, value);
             }
 
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                    m_matrix[i][j] = m_matrix[i][j] + value;
                 }
@@ -186,22 +185,22 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator-=(const T value)
+        Matrix& operator-=(const T value) throw(Overflow_Exception<T>, Underflow_Exception<T>)
         {
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
-            if((value < 0) && (matrix_max_value > std::numeric_limits<T>::max() - value ))
+            if(value < 0 && matrix_max_value > std::numeric_limits<T>::max() - value )
             {
-                throw Overflow_Exception<T>("with operator -=", matrix_max_value, value);
-            } else if ((value > 0) && (matrix_min_value < std::numeric_limits<T>::min() + value))
+                throw Overflow_Exception<T>("Oveflow with operator -=", matrix_max_value, value);
+            } else if (value > 0 && matrix_min_value < std::numeric_limits<T>::min() + value)
             {
-                throw Underflow_Exception<T>("with operator -=",matrix_min_value, value);
+                throw Underflow_Exception<T>("Underflow with operator -=",matrix_min_value, value);
             }
 
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                    m_matrix[i][j] = m_matrix[i][j] - value;
                 }
@@ -209,28 +208,28 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator*=(const T value)
+        Matrix& operator*=(const T value) throw(Overflow_Exception<T>, Underflow_Exception<T>)
         {
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
-            if((value > 0) && (matrix_max_value > 0) && (matrix_max_value > std::numeric_limits<T>::max() / value ))
+            if(value > 0 && matrix_max_value > 0 && matrix_max_value > std::numeric_limits<T>::max() / value )
             {
-                throw Overflow_Exception<T>("with operator *=", matrix_max_value, value);
-            } else if((value < 0) && (matrix_min_value < 0) && (matrix_min_value < std::numeric_limits<T>::max() / value ))
+                throw Overflow_Exception<T>("Oveflow with operator *=", matrix_max_value, value);
+            }else if(value < 0 && matrix_min_value < 0 && matrix_min_value < std::numeric_limits<T>::max() / value )
             {
-                 throw Overflow_Exception<T>("with operator *=", matrix_min_value, value);
-            }else if ((value < 0) && (matrix_max_value > 0) && (matrix_max_value > std::numeric_limits<T>::min() / value))
+                throw Overflow_Exception<T>("Oveflow with operator *=", matrix_min_value, value);
+            }else if (value < 0 && matrix_max_value > 0 && matrix_max_value > std::numeric_limits<T>::min() / value)
             {
-                throw Underflow_Exception<T>("with operator *=",matrix_max_value, value);
-            }else if ((value > 0) && (matrix_min_value < 0) && (matrix_min_value < std::numeric_limits<T>::min() / value))
+                throw Underflow_Exception<T>("Underflow with operator *=",matrix_max_value, value);
+            }else if (value > 0 && matrix_min_value < 0 && matrix_min_value < std::numeric_limits<T>::min() / value)
             {
-                throw Underflow_Exception<T>("with operator *=",matrix_min_value, value);
+                throw Underflow_Exception<T>("Underflow with operator *=",matrix_min_value, value);
             }
 
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                    m_matrix[i][j] = m_matrix[i][j] * value;
                 }
@@ -238,25 +237,25 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator/=(const T value )
+        Matrix& operator/=(const T value) throw(Division_By_Zero_Exception)
         {
             if(value != 0)
             {
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    for(int j = 0; j < m_cols; j++)
                     {
                        m_matrix[i][j] = m_matrix[i][j] / value;
                     }
                 }
             } else
             {
-                throw Division_By_Zero_Exception();
+                throw Division_By_Zero_Exception("Division Matrix by zero");
             }
             return *this;
         }
 
-        Matrix& operator+=(const Matrix& matrix)
+        Matrix& operator+=(const Matrix& matrix) throw(Overflow_Exception<T>, Underflow_Exception<T>, Matrics_Wrong_Size_Exception)
         {
             if(m_rows == matrix.m_rows && m_cols == matrix.m_cols)
             {
@@ -265,17 +264,17 @@ class Matrix
                 T matrix_B_max_value = matrix.get_max_element();
                 T matrix_B_min_value = matrix.get_max_element();
 
-                if((matrix_B_max_value > 0) && (matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_max_value))
+                if(matrix_B_max_value > 0 && matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_max_value)
                 {
-                    throw Overflow_Exception<T>(" with operator +=", matrix_A_max_value, matrix_B_max_value);
-                } else if ((matrix_B_max_value < 0) && (matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value))
+                    throw Overflow_Exception<T>("Oveflow with operator +=", matrix_A_max_value, matrix_B_max_value);
+                } else if (matrix_B_max_value < 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value)
                 {
-                    throw Underflow_Exception<T>(" with operator +=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception<T>("Underflow with operator +=", matrix_A_min_value, matrix_B_max_value);
                 }
 
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    for(int j = 0; j < m_cols; j++)
                     {
                         m_matrix[i][j] = m_matrix[i][j] + matrix.m_matrix[i][j];
                     }
@@ -287,7 +286,7 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator-=(const Matrix& matrix)
+        Matrix& operator-=(const Matrix& matrix) throw(Overflow_Exception<T>, Underflow_Exception<T>, Matrics_Wrong_Size_Exception)
         {
             if(m_rows == matrix.m_rows && m_cols == matrix.m_cols)
             {
@@ -298,16 +297,15 @@ class Matrix
 
                 if(((matrix_B_max_value < 0) && (matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_min_value )))
                 {
-                    throw Overflow_Exception<T>("with operator -=", matrix_A_max_value, matrix_B_max_value);
-                } else if (((matrix_B_max_value > 0) && (matrix_B_min_value > 0) && (matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value)) ||
-                           ((matrix_B_max_value > 0) && (matrix_B_min_value < 0) && (matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_max_value)))
+                    throw Overflow_Exception<T>("Oveflow with operator -=", matrix_A_max_value, matrix_B_max_value);
+                } else if ((matrix_B_max_value > 0 && matrix_B_min_value > 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value) ||
+                           (matrix_B_max_value > 0 && matrix_B_min_value < 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_max_value))
                 {
-                    throw Underflow_Exception<T>("with operator -=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception<T>("Underflow with operator -=", matrix_A_min_value, matrix_B_max_value);
                 }
-
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    for(int j = 0; j < m_cols; j++)
                     {
                         m_matrix[i][j] = m_matrix[i][j] - matrix.m_matrix[i][j];
                     }
@@ -319,22 +317,21 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator*=(const Matrix& matrix)
+        Matrix& operator*=(const Matrix& matrix) throw(Matrics_Wrong_Size_Exception)
         {
             if(m_cols == matrix.m_rows)
             {
                 T matrix_max_value = get_max_element();
                 T matrix_min_value = get_min_element();
 
-
                 Matrix temp_matrix(m_rows,matrix.m_cols);
                 T temp_element;
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < matrix.m_cols; j++)
+                    for(int j = 0; j < matrix.m_cols; j++)
                     {
                         temp_element = 0;
-                        for(unsigned int k = 0; k < m_cols; k++)
+                        for(int k = 0; k < m_cols; k++)
                         {
                             temp_element += m_matrix[i][k] * matrix.m_matrix[k][j];
                         }
@@ -358,68 +355,73 @@ class Matrix
                 return *this;
             } catch (Matrics_Wrong_Size_Exception& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             } catch (Division_By_Zero_Exception& exception)
             {
-                exception.what();
-            } catch(...)
+                std::cout << exception.what() << std::endl;
+            } catch(std::exception& exception)
             {
-                clear_memory();
-                std::cerr << "\n Unknow error" << std::endl;
-                throw;
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator+(Matrix matrix_A,
-                                const T value)
+        friend Matrix operator+(Matrix matrix_A, const T value)
         {
-            try {
-                return matrix_A += value;
-            } catch (Matrics_Wrong_Size_Exception& exception)
+            try
             {
-                exception.what();
+                return matrix_A += value;
             } catch (Overflow_Exception<T>& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             } catch (Underflow_Exception<T>& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator-(Matrix matrix_A,
-                                const T value)
+        friend Matrix operator-(Matrix matrix_A, const T value)
         {
             try {
                 return matrix_A -= value;
-            } catch (std::exception& exception) {
-                exception.what();
+            } catch (Overflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (Underflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator*(Matrix matrix_A,
-                                const T value)
+        friend Matrix operator*(Matrix matrix_A, const T value)
         {
             try {
                 return matrix_A *= value;
+            } catch (Overflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (Underflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator/(Matrix matrix_A,
-                                const T value)
+        friend Matrix operator/(Matrix matrix_A, const T value)
         {      
             try {
                 return  matrix_A /= value;
-            } catch (std::exception& exception) {
-                exception.what();
+            } catch (Division_By_Zero_Exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (std::exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator+(Matrix matrix_A,
-                                const char* string)
+        friend Matrix operator+(Matrix matrix_A, const char* string)
         {
             try
             {
@@ -430,14 +432,19 @@ class Matrix
                 {
                     return matrix_A += std::stoi(string);
                 }
+            } catch (Overflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (Underflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator-(Matrix matrix_A,
-                                const char* string)
+        friend Matrix operator-(Matrix matrix_A, const char* string)
         {
             try
             {
@@ -448,32 +455,42 @@ class Matrix
                 {
                     return matrix_A -= std::stoi(string);
                 }
+            } catch (Overflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (Underflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator*(Matrix matrix_A,
-                                const char* string)
+        friend Matrix operator*(Matrix matrix_A, const char* string)
         {
             try
             {
                 if(sizeof(T) > sizeof(int))
                 {
                     return matrix_A *= std::stod(string);
-                } else {
+                } else
+                {
                     return matrix_A *= std::stoi(string);
                 }
-            }
-             catch (std::exception& exception)
+            } catch (Overflow_Exception<T>& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
+            } catch (Underflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (std::exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator/(Matrix matrix_A,
-                                const char* string)
+        friend Matrix operator/(Matrix matrix_A, const char* string)
         {
             try
             {
@@ -484,68 +501,71 @@ class Matrix
                 {
                     return matrix_A /= std::stoi(string);
                 }
+            } catch (Division_By_Zero_Exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator+(Matrix matrix_A,
-                                const Matrix& matrix_B)
+        friend Matrix operator+(Matrix matrix_A, const Matrix& matrix_B)
         {
             try {
                 return matrix_A += matrix_B;
-            } catch (std::exception& exception) {
-                exception.what();
+            } catch (Matrics_Wrong_Size_Exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (Overflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (Underflow_Exception<T>& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            } catch (std::exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator-(Matrix matrix_A,
-                                const Matrix& matrix_B)
+        friend Matrix operator-(Matrix matrix_A, const Matrix& matrix_B)
         {
             try
             {
                 return matrix_A -= matrix_B;
             } catch (Matrics_Wrong_Size_Exception& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             } catch (Overflow_Exception<T>& exception)
             {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             } catch (Underflow_Exception<T>& exception)
             {
-                exception.what();
-            } catch (...){}
+                std::cout << exception.what() << std::endl;
+            } catch (std::exception& exception)
+            {
+                std::cout << exception.what() << std::endl;
+            }
         }
 
-        friend Matrix operator*(Matrix matrix_A,
-                                const Matrix& matrix_B)
+        friend Matrix operator*(Matrix matrix_A, const Matrix& matrix_B)
         {
             try
             {
                 return matrix_A *= matrix_B;
             } catch (Matrics_Wrong_Size_Exception& exception)
             {
-                exception.what();
-            } catch (Overflow_Exception<T>& exception)
+                std::cout << exception.what() << std::endl;
+            } catch (std::exception& exception)
             {
-                exception.what();
-            } catch (Underflow_Exception<T>& exception)
-            {
-                exception.what();
+                std::cout << exception.what() << std::endl;
             }
         }
 
-        friend Matrix operator/(Matrix matrix_A,
-                                const Matrix& matrix_B)
+        friend Matrix operator/(Matrix matrix_A, const Matrix& matrix_B)
         {
-            try
-            {
-                return matrix_A /= matrix_B;
-            } catch (std::exception& exception)
-            {
-                exception.what();
-            }
+            return matrix_A /= matrix_B;
         }
 
         bool operator>(const Matrix& matrix)
@@ -608,7 +628,7 @@ class Matrix
             return get_sum_of_elements() != value;
         }
 
-        double get_determinant () const
+        double get_determinant () const throw(Non_Square_Matrix_Exception)
         {
             if(m_cols == m_rows)
             {
@@ -616,18 +636,18 @@ class Matrix
                 double temp_row[m_cols];
                 double determinant {1};
                 double max_element_of_col;
-                unsigned int max_element_of_col_index;
+                int max_element_of_col_index;
 
-                for(unsigned int i = 0; i < m_cols; i++)
+                for(int i = 0; i < m_cols; i++)
                 {
-                    if(temp_matrix.m_matrix[i][i]==0)
+                    if(temp_matrix.m_matrix[i][i] == 0)
                     {
                         return 0;
                     }
                     max_element_of_col = temp_matrix.m_matrix[i][i];
                     max_element_of_col_index = i;
 
-                    for(unsigned int j = 0; j < m_rows; j++)
+                    for(int j = i; j < m_rows; j++)
                     {
                         if(temp_matrix.m_matrix[j][i] > max_element_of_col)
                         {
@@ -638,25 +658,22 @@ class Matrix
                     if(i != max_element_of_col_index)
                     {
                         determinant *= -1;
-                        for(unsigned int j = 0; j < m_cols; j++)
+                        for(int j = 0; j < m_cols; j++)
                         {
                             temp_row[j] = temp_matrix.m_matrix[max_element_of_col_index][j];
                             temp_matrix.m_matrix[max_element_of_col_index][j] = temp_matrix.m_matrix[i][j];
                             temp_matrix.m_matrix[i][j] = temp_row[j];
                         }
                     }
-                    for(unsigned int j = i + 1; j < m_rows; j++)
+                    for(int j = i + 1; j < m_rows; j++)
                     {
                         if(temp_matrix.m_matrix[j][i] != 0)
                         {
-                            double multiplier = 1/temp_matrix.m_matrix[i][i] * temp_matrix.m_matrix[j][i];
-                            for(unsigned int k = 0; k < m_cols; k++)
+                            double multiplier = temp_matrix.m_matrix[j][i];
+                            for(int k = 0; k < m_cols; k++)
                             {
-                                 temp_matrix.m_matrix[j][k] -= temp_matrix.m_matrix[i][k]*multiplier;
+                                 temp_matrix.m_matrix[j][k] -= (temp_matrix.m_matrix[i][k] / temp_matrix.m_matrix[i][i] * multiplier);
                             }
-                        }else
-                        {
-                            throw Division_By_Zero_Exception();
                         }
                      }
                      determinant *= temp_matrix.m_matrix[i][i];
@@ -670,65 +687,77 @@ class Matrix
 
         Matrix get_tranposed_matrix() const
         {
-            Matrix transposed_matrix (m_cols, m_rows);
-            for(unsigned int i = 0; i < m_cols; i++)
+            try
             {
-                for(unsigned int j = 0; j < m_rows; j++)
+                Matrix transposed_matrix (m_cols, m_rows);
+                for(int i = 0; i < m_cols; i++)
                 {
-                    transposed_matrix.set_element(i,j,m_matrix[j][i]);
+                    for(int j = 0; j < m_rows; j++)
+                    {
+                        transposed_matrix.set_element(i,j,m_matrix[j][i]);
+                    }
                 }
+                return transposed_matrix;
+            } catch (std::exception exception)
+            {
+                std::cout << exception.what() << std::endl;
             }
-            return transposed_matrix;
         }
 
-        Matrix get_inverse_matrix() const
+        Matrix get_inverse_matrix() const throw(Non_Square_Matrix_Exception, Zero_Determinate)
         {
-            if(m_cols == m_rows)
+            if(m_cols == m_rows )
             {
-                Matrix inverse_matrix(m_rows, m_cols);
-                for(unsigned int i = 0; i < m_cols; i++)
+                if(get_determinant() != 0)
                 {
-                    inverse_matrix.m_matrix[i][i] = 1;
-                }
-                Matrix temp_matrix(*this);
-                double temp_element;
-                for(unsigned int i = 0; i < m_cols; i++)
-                {
-                    if(temp_matrix.m_matrix[i][i] != 1)
+                    Matrix inverse_matrix(m_rows, m_cols);
+                    for(int i = 0; i < m_cols; i++)
                     {
-                        temp_element = temp_matrix.m_matrix[i][i];
-                        for(unsigned int j = 0; j < m_cols; j++)
-                        {
-                            temp_matrix.m_matrix[i][j] /= temp_element;
-                            inverse_matrix.m_matrix[i][j] /= temp_element;
-                        }
+                        inverse_matrix.m_matrix[i][i] = 1;
                     }
-                    for(unsigned int j = i + 1; j < m_rows; j++)
+                    Matrix temp_matrix(*this);
+                    double temp_element;
+                    for(int i = 0; i < m_cols; i++)
                     {
-                        if(temp_matrix.m_matrix[j][i])
+                        if(temp_matrix.m_matrix[i][i] != 1)
                         {
-                            temp_element = -temp_matrix.m_matrix[j][i];
-                            for(unsigned int k = 0; k < m_cols; k++)
+                            temp_element = temp_matrix.m_matrix[i][i];
+                            for(int j = 0; j < m_cols; j++)
                             {
-                                 temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
-                                 inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
-                            }
-                         }
-                    }
-                    for(int j = i - 1; j >= 0; j--)
-                    {
-                        if(temp_matrix.m_matrix[j][i])
-                        {
-                            temp_element = -temp_matrix.m_matrix[j][i];
-                            for(unsigned int k = 0; k < m_cols; k++)
-                            {
-                                 temp_matrix.m_matrix[j][k] += temp_matrix.m_matrix[i][k]*temp_element;
-                                 inverse_matrix.m_matrix[j][k] += inverse_matrix.m_matrix[i][k]*temp_element;
+                                temp_matrix.m_matrix[i][j] /= temp_element;
+                                inverse_matrix.m_matrix[i][j] /= temp_element;
                             }
                         }
+                        for(int j = i + 1; j < m_rows; j++)
+                        {
+                            if(temp_matrix.m_matrix[j][i])
+                            {
+                                temp_element = temp_matrix.m_matrix[j][i];
+                                for(int k = 0; k < m_cols; k++)
+                                {
+                                     temp_matrix.m_matrix[j][k] -= temp_matrix.m_matrix[i][k]*temp_element;
+                                     inverse_matrix.m_matrix[j][k] -= inverse_matrix.m_matrix[i][k]*temp_element;
+                                }
+                             }
+                        }
+                        for(int j = i - 1; j >= 0; j--)
+                        {
+                            if(temp_matrix.m_matrix[j][i])
+                            {
+                                temp_element = temp_matrix.m_matrix[j][i];
+                                for(int k = 0; k < m_cols; k++)
+                                {
+                                     temp_matrix.m_matrix[j][k] -= temp_matrix.m_matrix[i][k]*temp_element;
+                                     inverse_matrix.m_matrix[j][k] -= inverse_matrix.m_matrix[i][k]*temp_element;
+                                }
+                            }
+                        }
                     }
+                    return inverse_matrix;
+                } else
+                {
+                    throw Zero_Determinate("Inverse matrix does't exist. Determinate equal zero");
                 }
-                return inverse_matrix;
             } else
             {
                 throw Non_Square_Matrix_Exception("Matrix is not-square. Inverse matrix does not exist", m_rows, m_cols);
@@ -739,16 +768,15 @@ class Matrix
         {
             if(m_matrix != nullptr)
             {
-                std::cout << "\n[ ";
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
-                    for(unsigned int j = 0; j < m_cols; j++)
+                    std::cout << "\n[   ";
+                    for(int j = 0; j < m_cols; j++)
                     {
-                        std::cout << m_matrix[i][j] << ", ";
+                        std::cout << m_matrix[i][j] << "   ";
                     }
-                    std::cout <<"; ";
+                    std::cout << "]\n" << std::endl;
                 }
-                std::cout << " ]\n" << std::endl;
             } else {
                 std::cout << "Matrix doesn't exist" << std::endl;;
             }
@@ -761,9 +789,9 @@ class Matrix
         T **m_matrix = nullptr;
         void set_value(const T value)
         {
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                     m_matrix[i][j] = value;
                 }
@@ -777,7 +805,7 @@ class Matrix
                 try
                 {
                     m_matrix = new T *[rows];
-                    for(unsigned int i = 0; i < rows; i++)
+                    for(int i = 0; i < rows; i++)
                     {
                         m_matrix[i] = new T [cols]{0};
                     }
@@ -803,7 +831,7 @@ class Matrix
             m_rows = 0;
             if(m_matrix != nullptr)
             {
-                for(unsigned int i = 0; i < m_rows; i++)
+                for(int i = 0; i < m_rows; i++)
                 {
                     delete[] m_matrix[i];
                 }
@@ -812,13 +840,21 @@ class Matrix
             }
         };
 
-        T get_sum_of_elements() const
+        T get_sum_of_elements() const throw(Overflow_Exception<T>, Underflow_Exception<T>)
         {
+
             T sum {0};
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
+                   if(m_matrix[i][j] > 0 && sum > std::numeric_limits<T>::max() - m_matrix[i][j])
+                   {
+                       throw Overflow_Exception<T>("Oveflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
+                   } else if (m_matrix[i][j] < 0 && sum < std::numeric_limits<T>::min() - m_matrix[i][j])
+                   {
+                       throw Underflow_Exception<T>("Underflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
+                   }
                    sum += m_matrix[i][j];
                 }
             }
@@ -828,9 +864,9 @@ class Matrix
         T get_max_element() const
         {
             T max_elemet {0};
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                    if(m_matrix[i][j] > max_elemet)
                    {
@@ -844,9 +880,9 @@ class Matrix
         T get_min_element() const
         {
             T min_elemet {0};
-            for(unsigned int i = 0; i < m_rows; i++)
+            for(int i = 0; i < m_rows; i++)
             {
-                for(unsigned int j = 0; j < m_cols; j++)
+                for(int j = 0; j < m_cols; j++)
                 {
                    if(m_matrix[i][j] < min_elemet)
                    {
