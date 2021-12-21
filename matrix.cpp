@@ -37,7 +37,7 @@ int main()
 //        test2 = test2.get_inverse_matrix();
     } catch(Non_Square_Matrix_Exception& exception) {
         std::cout << exception.what() << std::endl;
-    } catch(Zero_Determinate& exception)
+    } catch(Zero_Determinate_Exception& exception)
     {
         std::cout << exception.what() << std::endl;
     } catch(...)

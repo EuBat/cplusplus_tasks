@@ -14,7 +14,7 @@ class Matrix
         clear_memory();
         };
 
-        Matrix(const size_t rows, const size_t cols) throw(std::bad_alloc)
+        Matrix(const size_t rows, const size_t cols)
                 : m_rows(rows),
                   m_cols(cols)
         {
@@ -162,17 +162,17 @@ class Matrix
             return *this;
         };
 
-        Matrix& operator+=(const T value) throw(Overflow_Exception<T>, Underflow_Exception<T>)
+        Matrix& operator+=(const T value)
         {
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
             if(value > 0 && matrix_max_value > std::numeric_limits<T>::max() - value)
             {
-                throw Overflow_Exception<T>("Oveflow with operator +=", matrix_max_value, value);
+                throw Overflow_Exception("Oveflow with operator +=", matrix_max_value, value);
             } else if (value < 0 && matrix_min_value < std::numeric_limits<T>::min() - value)
             {
-                throw Underflow_Exception<T>("Underflow with operator +=", matrix_min_value, value);
+                throw Underflow_Exception("Underflow with operator +=", matrix_min_value, value);
             }
 
             for(int i = 0; i < m_rows; i++)
@@ -185,17 +185,17 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator-=(const T value) throw(Overflow_Exception<T>, Underflow_Exception<T>)
+        Matrix& operator-=(const T value)
         {
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
             if(value < 0 && matrix_max_value > std::numeric_limits<T>::max() - value )
             {
-                throw Overflow_Exception<T>("Oveflow with operator -=", matrix_max_value, value);
+                throw Overflow_Exception("Oveflow with operator -=", matrix_max_value, value);
             } else if (value > 0 && matrix_min_value < std::numeric_limits<T>::min() + value)
             {
-                throw Underflow_Exception<T>("Underflow with operator -=",matrix_min_value, value);
+                throw Underflow_Exception("Underflow with operator -=",matrix_min_value, value);
             }
 
             for(int i = 0; i < m_rows; i++)
@@ -208,23 +208,23 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator*=(const T value) throw(Overflow_Exception<T>, Underflow_Exception<T>)
+        Matrix& operator*=(const T value)
         {
             T matrix_max_value = get_max_element();
             T matrix_min_value = get_min_element();
 
             if(value > 0 && matrix_max_value > 0 && matrix_max_value > std::numeric_limits<T>::max() / value )
             {
-                throw Overflow_Exception<T>("Oveflow with operator *=", matrix_max_value, value);
+                throw Overflow_Exception("Oveflow with operator *=", matrix_max_value, value);
             }else if(value < 0 && matrix_min_value < 0 && matrix_min_value < std::numeric_limits<T>::max() / value )
             {
-                throw Overflow_Exception<T>("Oveflow with operator *=", matrix_min_value, value);
+                throw Overflow_Exception("Oveflow with operator *=", matrix_min_value, value);
             }else if (value < 0 && matrix_max_value > 0 && matrix_max_value > std::numeric_limits<T>::min() / value)
             {
-                throw Underflow_Exception<T>("Underflow with operator *=",matrix_max_value, value);
+                throw Underflow_Exception("Underflow with operator *=",matrix_max_value, value);
             }else if (value > 0 && matrix_min_value < 0 && matrix_min_value < std::numeric_limits<T>::min() / value)
             {
-                throw Underflow_Exception<T>("Underflow with operator *=",matrix_min_value, value);
+                throw Underflow_Exception("Underflow with operator *=",matrix_min_value, value);
             }
 
             for(int i = 0; i < m_rows; i++)
@@ -237,7 +237,7 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator/=(const T value) throw(Division_By_Zero_Exception)
+        Matrix& operator/=(const T value)
         {
             if(value != 0)
             {
@@ -255,7 +255,7 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator+=(const Matrix& matrix) throw(Overflow_Exception<T>, Underflow_Exception<T>, Matrics_Wrong_Size_Exception)
+        Matrix& operator+=(const Matrix& matrix)
         {
             if(m_rows == matrix.m_rows && m_cols == matrix.m_cols)
             {
@@ -266,10 +266,10 @@ class Matrix
 
                 if(matrix_B_max_value > 0 && matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_max_value)
                 {
-                    throw Overflow_Exception<T>("Oveflow with operator +=", matrix_A_max_value, matrix_B_max_value);
+                    throw Overflow_Exception("Oveflow with operator +=", matrix_A_max_value, matrix_B_max_value);
                 } else if (matrix_B_max_value < 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value)
                 {
-                    throw Underflow_Exception<T>("Underflow with operator +=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception("Underflow with operator +=", matrix_A_min_value, matrix_B_max_value);
                 }
 
                 for(int i = 0; i < m_rows; i++)
@@ -286,7 +286,7 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator-=(const Matrix& matrix) throw(Overflow_Exception<T>, Underflow_Exception<T>, Matrics_Wrong_Size_Exception)
+        Matrix& operator-=(const Matrix& matrix)
         {
             if(m_rows == matrix.m_rows && m_cols == matrix.m_cols)
             {
@@ -297,11 +297,11 @@ class Matrix
 
                 if(((matrix_B_max_value < 0) && (matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_min_value )))
                 {
-                    throw Overflow_Exception<T>("Oveflow with operator -=", matrix_A_max_value, matrix_B_max_value);
+                    throw Overflow_Exception("Oveflow with operator -=", matrix_A_max_value, matrix_B_max_value);
                 } else if ((matrix_B_max_value > 0 && matrix_B_min_value > 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value) ||
                            (matrix_B_max_value > 0 && matrix_B_min_value < 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_max_value))
                 {
-                    throw Underflow_Exception<T>("Underflow with operator -=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception("Underflow with operator -=", matrix_A_min_value, matrix_B_max_value);
                 }
                 for(int i = 0; i < m_rows; i++)
                 {
@@ -317,7 +317,7 @@ class Matrix
             return *this;
         }
 
-        Matrix& operator*=(const Matrix& matrix) throw(Matrics_Wrong_Size_Exception)
+        Matrix& operator*=(const Matrix& matrix)
         {
             if(m_cols == matrix.m_rows)
             {
@@ -370,10 +370,10 @@ class Matrix
             try
             {
                 return matrix_A += value;
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             }
@@ -383,10 +383,10 @@ class Matrix
         {
             try {
                 return matrix_A -= value;
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             }
@@ -396,10 +396,10 @@ class Matrix
         {
             try {
                 return matrix_A *= value;
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
@@ -432,10 +432,10 @@ class Matrix
                 {
                     return matrix_A += std::stoi(string);
                 }
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
@@ -455,10 +455,10 @@ class Matrix
                 {
                     return matrix_A -= std::stoi(string);
                 }
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
@@ -478,10 +478,10 @@ class Matrix
                 {
                     return matrix_A *= std::stoi(string);
                 }
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
@@ -517,10 +517,10 @@ class Matrix
             } catch (Matrics_Wrong_Size_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
@@ -537,10 +537,10 @@ class Matrix
             } catch (Matrics_Wrong_Size_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Overflow_Exception<T>& exception)
+            } catch (Overflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
-            } catch (Underflow_Exception<T>& exception)
+            } catch (Underflow_Exception& exception)
             {
                 std::cout << exception.what() << std::endl;
             } catch (std::exception& exception)
@@ -628,7 +628,7 @@ class Matrix
             return get_sum_of_elements() != value;
         }
 
-        double get_determinant () const throw(Non_Square_Matrix_Exception)
+        double get_determinant () const
         {
             if(m_cols == m_rows)
             {
@@ -704,7 +704,7 @@ class Matrix
             }
         }
 
-        Matrix get_inverse_matrix() const throw(Non_Square_Matrix_Exception, Zero_Determinate)
+        Matrix get_inverse_matrix() const
         {
             if(m_cols == m_rows )
             {
@@ -756,7 +756,7 @@ class Matrix
                     return inverse_matrix;
                 } else
                 {
-                    throw Zero_Determinate("Inverse matrix does't exist. Determinate equal zero");
+                    throw Zero_Determinate_Exception("Inverse matrix does't exist. Determinate equal zero");
                 }
             } else
             {
@@ -845,7 +845,7 @@ class Matrix
             }
         };
 
-        T get_sum_of_elements() const throw(Overflow_Exception<T>, Underflow_Exception<T>)
+        T get_sum_of_elements() const
         {
 
             T sum {0};
@@ -855,10 +855,10 @@ class Matrix
                 {
                    if(m_matrix[i][j] > 0 && sum > std::numeric_limits<T>::max() - m_matrix[i][j])
                    {
-                       throw Overflow_Exception<T>("Oveflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
+                       throw Overflow_Exception("Oveflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
                    } else if (m_matrix[i][j] < 0 && sum < std::numeric_limits<T>::min() - m_matrix[i][j])
                    {
-                       throw Underflow_Exception<T>("Underflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
+                       throw Underflow_Exception("Underflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
                    }
                    sum += m_matrix[i][j];
                 }

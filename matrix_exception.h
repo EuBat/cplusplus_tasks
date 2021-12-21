@@ -4,9 +4,6 @@
 #include <stdexcept>
 
 // не полeчилось наследовать runtime_error
-// как часто нужно использовать noexcept?
-// спецификация исключений для функции просто для удобства?
-// как сделать исключение(удалить) все конструторы типа Matrix<int> (...)
 
 class Division_By_Zero_Exception : public std::exception
 {
@@ -24,10 +21,10 @@ private:
 };
 
 
-class Zero_Determinate : public std::exception
+class Zero_Determinate_Exception : public std::exception
 {
 public:
-   Zero_Determinate(const char* message)
+   Zero_Determinate_Exception(const char* message)
         :m_message(message){};
 
     virtual const char* what() const noexcept override
@@ -102,11 +99,10 @@ private:
 };
 
 
-template <typename T>
 class Overflow_Exception : public std::exception
 {
 public:
-    Overflow_Exception(const char* message, const T arg_A,const T arg_B)
+    Overflow_Exception(const char* message, const double arg_A, const double arg_B)
         : m_message(message), m_arg_A(arg_A), m_arg_B(arg_B){};
 
     Overflow_Exception(const char* message) : Overflow_Exception(message, 0, 0){};
@@ -126,15 +122,14 @@ public:
 
 private:
     const char* m_message;
-    T m_arg_A;
-    T m_arg_B;
+    double m_arg_A = 0;
+    double m_arg_B = 0;;
 };
 
-template <typename T>
 class Underflow_Exception : public std::exception
 {
 public:
-    Underflow_Exception(const char* message, const T arg_A,const T arg_B)
+    Underflow_Exception(const char* message, const double arg_A,const double arg_B)
         : m_message(message), m_arg_A(arg_A), m_arg_B(arg_B){};
 
     Underflow_Exception(const char* message) : Underflow_Exception(message, 0, 0){};
@@ -154,6 +149,6 @@ public:
 
 private:
     const char* m_message;
-    T m_arg_A;
-    T m_arg_B;
+    double m_arg_A;
+    double m_arg_B;
 };
