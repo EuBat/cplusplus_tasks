@@ -169,10 +169,10 @@ class Matrix
 
             if(value > 0 && matrix_max_value > std::numeric_limits<T>::max() - value)
             {
-                throw Overflow_Exception("Oveflow with operator +=", matrix_max_value, value);
+                throw Overflow_Exception("Oveflow with operator +=");
             } else if (value < 0 && matrix_min_value < std::numeric_limits<T>::min() - value)
             {
-                throw Underflow_Exception("Underflow with operator +=", matrix_min_value, value);
+                throw Underflow_Exception("Underflow with operator +=");
             }
 
             for(int i = 0; i < m_rows; i++)
@@ -192,10 +192,10 @@ class Matrix
 
             if(value < 0 && matrix_max_value > std::numeric_limits<T>::max() - value )
             {
-                throw Overflow_Exception("Oveflow with operator -=", matrix_max_value, value);
+                throw Overflow_Exception("Oveflow with operator -=");
             } else if (value > 0 && matrix_min_value < std::numeric_limits<T>::min() + value)
             {
-                throw Underflow_Exception("Underflow with operator -=",matrix_min_value, value);
+                throw Underflow_Exception("Underflow with operator -=");
             }
 
             for(int i = 0; i < m_rows; i++)
@@ -215,16 +215,16 @@ class Matrix
 
             if(value > 0 && matrix_max_value > 0 && matrix_max_value > std::numeric_limits<T>::max() / value )
             {
-                throw Overflow_Exception("Oveflow with operator *=", matrix_max_value, value);
+                throw Overflow_Exception("Oveflow with operator *=");
             }else if(value < 0 && matrix_min_value < 0 && matrix_min_value < std::numeric_limits<T>::max() / value )
             {
-                throw Overflow_Exception("Oveflow with operator *=", matrix_min_value, value);
+                throw Overflow_Exception("Oveflow with operator *=");
             }else if (value < 0 && matrix_max_value > 0 && matrix_max_value > std::numeric_limits<T>::min() / value)
             {
-                throw Underflow_Exception("Underflow with operator *=",matrix_max_value, value);
+                throw Underflow_Exception("Underflow with operator *=");
             }else if (value > 0 && matrix_min_value < 0 && matrix_min_value < std::numeric_limits<T>::min() / value)
             {
-                throw Underflow_Exception("Underflow with operator *=",matrix_min_value, value);
+                throw Underflow_Exception("Underflow with operator *=");
             }
 
             for(int i = 0; i < m_rows; i++)
@@ -266,10 +266,10 @@ class Matrix
 
                 if(matrix_B_max_value > 0 && matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_max_value)
                 {
-                    throw Overflow_Exception("Oveflow with operator +=", matrix_A_max_value, matrix_B_max_value);
+                    throw Overflow_Exception("Oveflow with operator +=");
                 } else if (matrix_B_max_value < 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value)
                 {
-                    throw Underflow_Exception("Underflow with operator +=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception("Underflow with operator +=");
                 }
 
                 for(int i = 0; i < m_rows; i++)
@@ -281,7 +281,7 @@ class Matrix
                 }
             } else
             {
-                throw Matrics_Wrong_Size_Exception("Additional error. Matrices have different sizes", m_rows, m_cols, matrix.m_rows, matrix.m_cols);
+                throw Matrics_Wrong_Size_Exception("Additional error. Matrices have different sizes");
             }
             return *this;
         }
@@ -297,11 +297,11 @@ class Matrix
 
                 if(((matrix_B_max_value < 0) && (matrix_A_max_value > std::numeric_limits<T>::max() - matrix_B_min_value )))
                 {
-                    throw Overflow_Exception("Oveflow with operator -=", matrix_A_max_value, matrix_B_max_value);
+                    throw Overflow_Exception("Oveflow with operator -=");
                 } else if ((matrix_B_max_value > 0 && matrix_B_min_value > 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_min_value) ||
                            (matrix_B_max_value > 0 && matrix_B_min_value < 0 && matrix_A_min_value < std::numeric_limits<T>::min() - matrix_B_max_value))
                 {
-                    throw Underflow_Exception("Underflow with operator -=", matrix_A_min_value, matrix_B_max_value);
+                    throw Underflow_Exception("Underflow with operator -=");
                 }
                 for(int i = 0; i < m_rows; i++)
                 {
@@ -312,7 +312,7 @@ class Matrix
                 }
             } else
             {
-                throw Matrics_Wrong_Size_Exception("Difference error. Matrices have different sizes.", m_rows, m_cols, matrix.m_rows, matrix.m_cols);
+                throw Matrics_Wrong_Size_Exception("Difference error. Matrices have different sizes.");
             }
             return *this;
         }
@@ -341,8 +341,7 @@ class Matrix
                 *this = temp_matrix;
             }else
             {
-                throw Matrics_Wrong_Size_Exception("Multiplication error. Columns of the matrix A are not equal to the rows of the matrix B",
-                                                   m_rows, m_cols, matrix.m_rows, matrix.m_cols);
+                throw Matrics_Wrong_Size_Exception("Multiplication error. Columns of the matrix A are not equal to the rows of the matrix B");
             }
             return *this;
         }
@@ -681,7 +680,7 @@ class Matrix
                 return determinant;
             } else
             {
-                throw Non_Square_Matrix_Exception("Matrix is not-square. Determinate does not exist", m_rows, m_cols);
+                throw Non_Square_Matrix_Exception("Matrix is not-square. Determinate does not exist");
             }
         }
 
@@ -760,7 +759,7 @@ class Matrix
                 }
             } else
             {
-                throw Non_Square_Matrix_Exception("Matrix is not-square. Inverse matrix does not exist", m_rows, m_cols);
+                throw Non_Square_Matrix_Exception("Matrix is not-square. Inverse matrix does not exist");
             }
         };
 
@@ -855,10 +854,10 @@ class Matrix
                 {
                    if(m_matrix[i][j] > 0 && sum > std::numeric_limits<T>::max() - m_matrix[i][j])
                    {
-                       throw Overflow_Exception("Oveflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
+                       throw Overflow_Exception("Oveflow in function \"get_sum_of_elements\"");
                    } else if (m_matrix[i][j] < 0 && sum < std::numeric_limits<T>::min() - m_matrix[i][j])
                    {
-                       throw Underflow_Exception("Underflow in function \"get_sum_of_elements\"", sum, m_matrix[i][j]);
+                       throw Underflow_Exception("Underflow in function \"get_sum_of_elements\"");
                    }
                    sum += m_matrix[i][j];
                 }
