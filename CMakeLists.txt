@@ -7,4 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(task5 matrix.cpp
                      matrix.h
-                     matrix_exception.h )
+                     matrix_exception.h
+                     loader.h
+                     sorter.h)
