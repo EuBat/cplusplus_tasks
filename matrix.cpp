@@ -1,4 +1,5 @@
- #include "matrix.h"
+#include "matrix.h"
+#include "loader.h"
 
 int main()
 {
@@ -33,6 +34,6 @@ int main()
         std::cout << "wtf" << std::endl;
     }
 
-
+    FileLoader LoadFromFile("matrix.rtf");
     return 0;
 }

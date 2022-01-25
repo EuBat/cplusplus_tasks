@@ -1,14 +1,40 @@
 #pragma once
-#include <iostream>
+#include <vector>
+//#include <iostream>
+#include <fstream>
 
-class Loader {
+
+#include "matrix.h"
+
+class Loader
+{
 public:
     ~Loader() = default;
+    std::vector<std::string>  mData;
+};
 
-    void SetFileName(const std::string& FileName)
-        :mFileName(FileName){};
+class FileLoader: public Loader
+{
+public:
+    FileLoader(const std::string& FileName)
+        :mFileName(FileName)
+    {
+        mFile.open(mFileName,std::ios::out);
+        if(!mFile.is_open())
+        {
+            std::cout << "Bad" << std::endl;
+        } else
+        {
+            mFile.getline();
+        }
+    };
+
+    std::string GetFileName() const
+    {
+        return mFileName;
+    }
 private:
+    std::fstream mFile;
     std::string mFileName;
 
 };
-git
