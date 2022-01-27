@@ -34,6 +34,6 @@ int main()
         std::cout << "wtf" << std::endl;
     }
 
-    FileLoader LoadFromFile("matrix.rtf");
+    FileLoader LoadFromFile("/Users/macbook/code/cplusplus/task7/matrix.rtf");
     return 0;
 }
