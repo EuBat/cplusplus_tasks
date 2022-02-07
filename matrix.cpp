@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include "loader.h"
+#include <locale>
 
 int main()
 {
@@ -34,6 +35,8 @@ int main()
         std::cout << "wtf" << std::endl;
     }
 
-    FileLoader LoadFromFile("/Users/macbook/code/cplusplus/task7/matrix.rtf");
+//    ConsoleLoader LoadFromConcole;
+    FileLoader LoadFromFile("/Users/macbook/code/cplusplus/task7/matrix in.txt");
+
     return 0;
 }

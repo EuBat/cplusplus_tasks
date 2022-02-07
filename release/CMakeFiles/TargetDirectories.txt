@@ -1,0 +1,3 @@
+/Users/macbook/code/cplusplus/task7/release/CMakeFiles/rebuild_cache.dir
+/Users/macbook/code/cplusplus/task7/release/CMakeFiles/edit_cache.dir
+/Users/macbook/code/cplusplus/task7/release/CMakeFiles/task7.dir

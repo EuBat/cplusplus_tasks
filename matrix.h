@@ -44,6 +44,13 @@ class Matrix
             }
         };
 
+        Matrix(const std::string *matrix_string, const size_t rows, const size_t cols)
+        {
+
+            get_memory(rows, cols);
+
+        };
+
         Matrix(const char *math_string, const size_t rows, const size_t cols)
             : m_rows(rows),
               m_cols(cols)

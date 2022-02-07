@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/macbook/code/cplusplus/task7/loader.h
+vector
+-
+fstream
+-
+iostream
+-
+sstream
+-
+matrix.h
+/Users/macbook/code/cplusplus/task7/matrix.h
+
+/Users/macbook/code/cplusplus/task7/matrix.cpp
+matrix.h
+/Users/macbook/code/cplusplus/task7/matrix.h
+loader.h
+/Users/macbook/code/cplusplus/task7/loader.h
+locale
+-
+
+/Users/macbook/code/cplusplus/task7/matrix.h
+iostream
+-
+cstring
+-
+limits
+-
+matrix_exception.h
+/Users/macbook/code/cplusplus/task7/matrix_exception.h
+
+/Users/macbook/code/cplusplus/task7/matrix_exception.h
+iostream
+-
+stdexcept
+-
+
