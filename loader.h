@@ -6,11 +6,27 @@
 
 
 #include "matrix.h"
+#include "matrix_exception.h"
 
 class Loader
 {
 public:
     ~Loader() = default;
+
+    std::string getData() const
+    {
+        return mData;
+    }
+
+    size_t getCols() const
+    {
+        return mCols;
+    }
+
+    size_t getRows() const
+    {
+        return mRows;
+    }
 protected:
     std::string mData;
     size_t mCols, mRows;
@@ -53,33 +69,17 @@ public:
         mFile.open(mFileName,std::ios::in);
         if(!mFile.is_open())
         {
-            std::cout << "Bad" << std::endl;
+            throw(FileOpen_Exception("file do not open"));
         }
         else
         {
-            std::string FileStringTemp;
-            std::stringstream StringStream;
-            while(mFile)
+            std::string StringBuffer;
+            while(std::getline(mFile,StringBuffer))
             {
-                while(std::getline(mFile,FileStringTemp))
-                {
-                    StringStream << FileStringTemp;
-
-                }
-    //            std::getline(mFile, FileStringTemp);
-//                mFile.read(FileStringTemp,1);
-    //            std::stringstream FileStringStream(FileStringTemp);
+                mData.append(StringBuffer);
             }
-            double a;
-            while(StringStream >> a)
-            {
-                std::cout << "  " << a << " ";
-            }
-            mData = StringStream.str();
             mFile.close();
         }
-        std::cout << mData << " Size:   " <<mData.size() <<  std::endl;
-
     };
 
     std::string GetFileName() const

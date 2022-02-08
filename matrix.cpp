@@ -26,7 +26,8 @@ int main()
         std::cout << "wtf" << std::endl;
     }
 
-    try {
+    try
+    {
         test2 = test2.get_inverse_matrix();
     } catch(Non_Square_Matrix_Exception& exception) {
         std::cout << exception.what() << std::endl;
@@ -36,7 +37,12 @@ int main()
     }
 
 //    ConsoleLoader LoadFromConcole;
-    FileLoader LoadFromFile("/Users/macbook/code/cplusplus/task7/matrix in.txt");
-
+    try
+    {
+        FileLoader LoadFromFile("C://Qt/project/task7/matrix in.txt");
+        Matrix<double> MatrixFile(LoadFromFile.getData(),LoadFromFile.getRows(),LoadFromFile.getCols());
+    } catch (FileOpen_Exception exception) {
+        std::cout << exception.what() << std::endl;
+    }
     return 0;
 }

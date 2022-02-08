@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cstring>
 #include <limits>
+#include <sstream>
+
 #include "matrix_exception.h"
 
 template <typename T>
@@ -44,8 +46,12 @@ class Matrix
             }
         };
 
-        Matrix(const std::string *matrix_string, const size_t rows, const size_t cols)
+        Matrix(const std::string* matrix_string, const size_t rows, const size_t cols)
         {
+            std::stringstream buffer_string;
+            buffer_string << matrix_string;
+
+
 
             get_memory(rows, cols);
 
