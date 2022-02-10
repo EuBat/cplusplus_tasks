@@ -40,9 +40,14 @@ int main()
     try
     {
         FileLoader LoadFromFile("C://Qt/project/task7/matrix in.txt");
-        Matrix<double> MatrixFile(LoadFromFile.getData(),LoadFromFile.getRows(),LoadFromFile.getCols());
-    } catch (FileOpen_Exception exception) {
+        Matrix<double> MatrixFile(LoadFromFile.getData());
+    } catch (FileOpen_Exception exception)
+    {
+        std::cout << exception.what() << std::endl;
+    } catch (UncorrectInputData_Exception exception)
+    {
         std::cout << exception.what() << std::endl;
     }
+
     return 0;
 }

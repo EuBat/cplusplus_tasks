@@ -17,19 +17,8 @@ public:
     {
         return mData;
     }
-
-    size_t getCols() const
-    {
-        return mCols;
-    }
-
-    size_t getRows() const
-    {
-        return mRows;
-    }
 protected:
     std::string mData;
-    size_t mCols, mRows;
 };
 
 class ConsoleLoader: public Loader
@@ -37,6 +26,7 @@ class ConsoleLoader: public Loader
 public:
     ConsoleLoader()
     {
+        size_t mCols, mRows;
         std::cout << "Set the matrix cols and rows\n";
         std::cin >> mCols >> mRows;
         while(!std::cin.good())
@@ -73,10 +63,11 @@ public:
         }
         else
         {
+
             std::string StringBuffer;
             while(std::getline(mFile,StringBuffer))
             {
-                mData.append(StringBuffer);
+                mData.append(" " + StringBuffer);
             }
             mFile.close();
         }

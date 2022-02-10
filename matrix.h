@@ -46,16 +46,38 @@ class Matrix
             }
         };
 
-        Matrix(const std::string* matrix_string, const size_t rows, const size_t cols)
+        Matrix(const std::string& matrix_string)
         {
-            std::stringstream buffer_string;
-            buffer_string << matrix_string;
+
+            std::stringstream stream_input_string (matrix_string);
 
 
+//            for(int i = 0; i < matrix_string.length(); i++)
+//            {
+//                if(!std::isdigit(matrix_string[i]) && matrix_string[i] == ".")
+//                {
+//                    throw UncorrectInputData_Exception("There are wrong format of data string");
+//                }
+//            }
+            stream_input_string >> m_cols >> m_rows;
+            std::string row_string;
+            get_memory(m_rows,m_cols);
+            std::string temp_value;
+            for(int i = 0; i < m_rows; i++)
+            {
+                std::getline(stream_input_string,row_string,';');
+                std::stringstream stream_row_string (row_string);
+                for(int j = 0; j < m_cols; j++)
+                {
+                    stream_row_string.ignore(256,'[');
+                    std::getline(stream_row_string,temp_value,' ');
 
-            get_memory(rows, cols);
-
-        };
+//                    stream_row_string >> temp_value;
+                    set_value(i,j,std::stod(temp_value));
+                }
+            }
+            print_in_string();
+        }
 
         Matrix(const char *math_string, const size_t rows, const size_t cols)
             : m_rows(rows),
@@ -73,7 +95,7 @@ class Matrix
             {
                 for(int i = 0; i < std::strlen(tokens); i++)
                 {
-                    if(!std::isdigit(tokens[i]) && tokens[i] != '.' )
+                    if(!std::isdigit(tokens[i]) && tokens[i] != '.')
                     {
                         flag_no_letter = false;
                     }
@@ -106,6 +128,7 @@ class Matrix
             {
                 m_cols = 0;
                 m_rows = 0;
+                throw UncorrectInputData_Exception("There are wrong format of data string");
             }
         };
 

@@ -119,3 +119,18 @@ public:
 private:
     const char* m_message;
 };
+
+class UncorrectInputData_Exception : public std::exception
+{
+public:
+    UncorrectInputData_Exception(const char* message)
+        :m_message(message){};
+
+    virtual const char* what() const noexcept override
+    {
+        return m_message;
+    };
+
+private:
+    const char* m_message;
+};
