@@ -52,13 +52,7 @@ class Matrix
             std::stringstream stream_input_string (matrix_string);
 
 
-//            for(int i = 0; i < matrix_string.length(); i++)
-//            {
-//                if(!std::isdigit(matrix_string[i]) && matrix_string[i] == ".")
-//                {
-//                    throw UncorrectInputData_Exception("There are wrong format of data string");
-//                }
-//            }
+
             stream_input_string >> m_cols >> m_rows;
             std::string row_string;
             get_memory(m_rows,m_cols);
@@ -802,6 +796,11 @@ class Matrix
         void set_value(const int row, const int col, const T value)
         {
             m_matrix[row][col] = value;
+        }
+
+        T get_value(const int row, const int col) const
+        {
+            return m_matrix[row][col];
         }
 
         void print_in_string() const

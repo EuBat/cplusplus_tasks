@@ -5,4 +5,5 @@ CMakeFiles/task7.dir/matrix.cpp.o: ../loader.h
 CMakeFiles/task7.dir/matrix.cpp.o: ../matrix.cpp
 CMakeFiles/task7.dir/matrix.cpp.o: ../matrix.h
 CMakeFiles/task7.dir/matrix.cpp.o: ../matrix_exception.h
+CMakeFiles/task7.dir/matrix.cpp.o: ../sorter.h
 

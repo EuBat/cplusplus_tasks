@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include "loader.h"
+#include "sorter.h"
 #include <locale>
 
 int main()
@@ -36,10 +37,13 @@ int main()
         std::cout << "wtf" << std::endl;
     }
 
+    MakeSort(&test2,4,4);
+
 //    ConsoleLoader LoadFromConcole;
     try
     {
-        FileLoader LoadFromFile("C://Qt/project/task7/matrix in.txt");
+
+        FileLoader LoadFromFile("/Users/macbook/code/cplusplus/task7/matrix in.txt");
         Matrix<double> MatrixFile(LoadFromFile.getData());
     } catch (FileOpen_Exception exception)
     {

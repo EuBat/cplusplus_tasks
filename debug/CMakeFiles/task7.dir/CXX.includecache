@@ -17,12 +17,16 @@ sstream
 -
 matrix.h
 /Users/macbook/code/cplusplus/task7/matrix.h
+matrix_exception.h
+/Users/macbook/code/cplusplus/task7/matrix_exception.h
 
 /Users/macbook/code/cplusplus/task7/matrix.cpp
 matrix.h
 /Users/macbook/code/cplusplus/task7/matrix.h
 loader.h
 /Users/macbook/code/cplusplus/task7/loader.h
+sorter.h
+/Users/macbook/code/cplusplus/task7/sorter.h
 locale
 -
 
@@ -33,6 +37,8 @@ cstring
 -
 limits
 -
+sstream
+-
 matrix_exception.h
 /Users/macbook/code/cplusplus/task7/matrix_exception.h
 
@@ -41,4 +47,8 @@ iostream
 -
 stdexcept
 -
+
+/Users/macbook/code/cplusplus/task7/sorter.h
+matrix.h
+/Users/macbook/code/cplusplus/task7/matrix.h
 
