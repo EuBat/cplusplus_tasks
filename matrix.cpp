@@ -36,9 +36,10 @@ int main()
     {
         std::cout << "wtf" << std::endl;
     }
-
+    Sort<double>::MatrixQuickSort(&test2);
     double array[8]{2,8,7,1,3,5,6,4};
-    QuickSort(array, 0, 8);
+
+//    QuickSort(array, 0, 8)
     for(int i = 0; i < 8; i++)
     {
         std::cout << "  "<< array[i];

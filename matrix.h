@@ -820,7 +820,7 @@ class Matrix
                 std::cout << "Matrix doesn't exist" << std::endl;;
             }
         };
-
+        template <typename S> friend class Sort;
     private:
         size_t m_rows{0};
         size_t m_cols{0};
