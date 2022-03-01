@@ -1,9 +1,6 @@
 #pragma once
-#include <vector>
 #include <fstream>
 #include <iostream>
-#include <sstream>
-
 
 #include "matrix.h"
 #include "matrix_exception.h"
@@ -17,6 +14,9 @@ public:
     {
         return mData;
     }
+
+    virtual void Load() = 0;
+
 protected:
     std::string mData;
 };
@@ -25,6 +25,11 @@ class ConsoleLoader: public Loader
 {
 public:
     ConsoleLoader()
+    {
+        Load();
+    }
+
+    virtual void Load() override
     {
         size_t mCols, mRows;
         std::cout << "Set the matrix cols and rows\n";
@@ -40,14 +45,16 @@ public:
         std::string CurrentLine;
         std::cout << "String format: a b c ... n, where a, b, c, n – number.\n";
         std::cin.ignore();
-        for(int i = 1; i <= mRows; i++) {
+        for(int i = 1; i <= mRows; i++)
+        {
 
             std::cout << "Set the marix rows # " << i << "\n";
             std::getline(std::cin,CurrentLine);
             mData.append(CurrentLine + ';');
         }
-    };
+    }
 };
+
 
 
 class FileLoader: public Loader
@@ -56,6 +63,12 @@ public:
     FileLoader(const std::string& FileName)
         :mFileName(FileName)
     {
+        Load();
+    }
+
+    virtual void Load() override
+    {
+        std::fstream mFile;
         mFile.open(mFileName,std::ios::in);
         if(!mFile.is_open())
         {
@@ -63,7 +76,6 @@ public:
         }
         else
         {
-
             std::string StringBuffer;
             while(std::getline(mFile,StringBuffer))
             {
@@ -71,7 +83,7 @@ public:
             }
             mFile.close();
         }
-    };
+    }
 
     std::string GetFileName() const
     {
@@ -79,7 +91,5 @@ public:
     }
 
 private:
-    std::fstream mFile;
     std::string mFileName;
-
 };

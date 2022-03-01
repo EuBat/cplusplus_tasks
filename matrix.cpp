@@ -48,7 +48,6 @@ int main()
 //    ConsoleLoader LoadFromConcole;
     try
     {
-
 //        FileLoader LoadFromFile("/Users/macbook/code/cplusplus/task7/matrix in.txt");
         FileLoader LoadFromFile("c://qt/project/task7/matrix in.txt");
         Matrix<double> MatrixFile(LoadFromFile.getData());

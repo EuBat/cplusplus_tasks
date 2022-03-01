@@ -7,13 +7,9 @@
 #IncludeRegexTransform: 
 
 /Users/macbook/code/cplusplus/task7/loader.h
-vector
--
 fstream
 -
 iostream
--
-sstream
 -
 matrix.h
 /Users/macbook/code/cplusplus/task7/matrix.h
